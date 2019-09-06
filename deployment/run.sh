@@ -1,10 +1,20 @@
 #!/bin/bash
 #
-# Assume this script is run by a regular user (such as "ubuntu" on AWS EC2).
+# This script should be run by a user who has "sudo" privilege
+# (such as "ubuntu" on AWS EC2).
 
 # Install Nginx and Supervisor
 sudo apt-get update && apt-get upgrade -y
 sudo apt-get install python3 nginx supervisor -y
+
+# Install certbot for SSL certificate in HTTPS
+sudo add-apt-repository ppa:certbot/certbot --yes
+sudo apt update
+sudo apt install certbot python-certbot-nginx -y
+
+# Certbot config
+# Fill "<email>" and "<domain_name>" into the following command:
+# sudo certbot --nginx -n -m <email> --no-eff-email certonly -d <domain_name> --agree-tos
 
 # "pg_config" command in libpq-dev is required to compile "psycopg2",
 # which is included in "py3-adage-backend/adage/requirements.txt"
@@ -33,8 +43,18 @@ pip install -r ~/py3-adage-backend/adage/requirements.txt
 mkdir -p ~/www/static
 ~/py3-adage-backend/adage/manage.py collectstatic
 
-# Create Nginx and Supervisor config files
-# ... ...
+# Nginx config
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo cp ~/py3-adage-backend/deployment/nginx.conf /etc/nginx/sites-available/adage.conf
+cd /etc/nginx/sites-enabled/
+sudo ln -s ../sites-available/adage.conf .
+
+# Supervisor config
+sudo cp ~/py3-adage-backend/deployment/supervisor-adage.conf /etc/supervisor/conf.d/adage-gunicorn.conf
+# create log file
+sudo touch /var/log/adage-gunicorn.log
+# Make "ubuntu" the owner of the log file
+sudo chown ubuntu:ubuntu /var/log/adage-gunicorn.log
 
 # Restart Supervisor and Nginx
 sudo systemctl restart supervisor
