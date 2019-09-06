@@ -136,7 +136,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
+# Use "python manage.py collectstatic" command to populate static directory
+STATIC_ROOT = "/home/ubuntu/www/static/"
 STATIC_URL = '/static/'
 
 # CORS config
