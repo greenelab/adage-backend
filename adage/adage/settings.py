@@ -11,22 +11,26 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Read secrets from YAML file
+path = os.path.join(BASE_DIR, 'adage', 'secrets.yml')
+with open(path) as read_file:
+    secrets = yaml.full_load(read_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wo49mswbw)y_y2ttsoja0$r60i+2%%=n))j(2*=24i3_#7ucd3'
+SECRET_KEY = secrets['db']['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = secrets['db']['debug']
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = secrets['db']['allowed_hosts'].strip().split(',')
 
 # Application definition
 
@@ -37,7 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_filters',
+    'corsheaders',
+    'organisms',
+    'genes',
+    'analyze',
 ]
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 25,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,8 +91,12 @@ WSGI_APPLICATION = 'adage.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': secrets['db']['name'],
+        'USER': secrets['db']['user'],
+        'PASSWORD': secrets['db']['password'],
+        'HOST': secrets['db']['host'],
+        'PORT': secrets['db']['port'],
     }
 }
 
@@ -118,3 +138,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CORS config
+# https://pypi.org/project/django-cors-headers/
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/v1/.*$'
+CORS_ALLOW_METHODS = ('GET', )

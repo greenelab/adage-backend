@@ -2,7 +2,7 @@
 *.pyc
 *.sqlite3
 *.json_cache
-adage/adage/config.py
+adage/adage/secrets.yml
 data/gene_history
 data/*.gene_info
 data/bootstrap_cache_*

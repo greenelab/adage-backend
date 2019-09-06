@@ -30,7 +30,11 @@ class Gene(models.Model):
     # "organism" field contains the primary key of whichever organism
     # instance the gene belongs to.  For more info, see:
     # https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey
-    organism = models.ForeignKey(Organism, null=False)
+    organism = models.ForeignKey(
+        Organism,
+        on_delete=models.CASCADE,
+        null=False,
+    )
 
     # "aliases" stores a space-separated list of aliases.
     aliases = models.TextField()
@@ -49,10 +53,10 @@ class Gene(models.Model):
         return self.systematic_name
 
     def wall_of_name(self):
-        '''
-        Appends identifiers for the different databases (such as Entrez id's)
+        """Appends identifiers for the different databases (such as Entrez id's)
         and returns them. Uses the CrossRef class below.
-        '''
+        """
+
         names = []
         if self.standard_name:
             names.append(self.standard_name)
@@ -68,8 +72,7 @@ class Gene(models.Model):
         return names_string
 
     def save(self, *args, **kwargs):
-        """
-        Override save() method to make sure that standard_name and
+        """Override save() method to make sure that standard_name and
         systematic_name won't be null or empty, or consist of only space
         characters (such as space, tab, new line, etc).
         """
@@ -94,8 +97,7 @@ class CrossRefDB(models.Model):
     url = models.URLField()
 
     def save(self, *args, **kwargs):
-        """
-        Extends save() method of Django models to check that the database name
+        """Extends save() method of Django models to check that the database name
         is not left blank.
         Note: 'blank=False' is only checked at a form-validation-stage. A test
         using Fixtureless that tries to randomly create a CrossRefDB with an
@@ -114,8 +116,16 @@ class CrossRefDB(models.Model):
 
 
 class CrossRef(models.Model):
-    crossrefdb = models.ForeignKey(CrossRefDB, null=False)
-    gene = models.ForeignKey(Gene, null=False)
+    crossrefdb = models.ForeignKey(
+        CrossRefDB,
+        on_delete=models.CASCADE,
+        null=False,
+    )
+    gene = models.ForeignKey(
+        Gene,
+        on_delete=models.CASCADE,
+        null=False,
+    )
     xrid = models.CharField(max_length=32, null=False, db_index=True)
 
     def __str__(self):

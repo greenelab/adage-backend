@@ -1,0 +1,7 @@
+Django==2.2.5
+django-cors-headers==3.1.0
+django-filter==2.2.0
+djangorestframework==3.10.3
+gunicorn==19.9.0
+psycopg2==2.8.3
+PyYAML==5.1.2
