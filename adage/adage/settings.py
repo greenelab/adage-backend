@@ -17,20 +17,20 @@ import yaml
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Read secrets from YAML file
-path = os.path.join(BASE_DIR, 'adage', 'secrets.yml')
+path = os.path.join(BASE_DIR, 'adage', 'config.yml')
 with open(path) as read_file:
-    secrets = yaml.full_load(read_file)
+    config = yaml.full_load(read_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets['key']
+SECRET_KEY = config.get('secret_key', 'django_secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = secrets['debug']
+DEBUG = config.get('debug', True)
 
-ALLOWED_HOSTS = secrets['allowed_hosts']
+ALLOWED_HOSTS = config.get('allowed_hosts', [])
 
 # Application definition
 
@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'adage.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': secrets['db']['name'],
-        'USER': secrets['db']['user'],
-        'PASSWORD': secrets['db']['password'],
-        'HOST': secrets['db']['host'],
-        'PORT': secrets['db']['port'],
+        'NAME': config['db']['name'],
+        'USER': config['db']['user'],
+        'PASSWORD': config['db']['password'],
+        'HOST': config['db']['host'],
+        'PORT': config['db']['port'],
     }
 }
 

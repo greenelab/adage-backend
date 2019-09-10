@@ -2,7 +2,11 @@
 *.pyc
 *.sqlite3
 *.json_cache
-adage/adage/secrets.yml
+
+# Django config file
+adage/adage/config.yml
+
+# Adage-specific data files
 data/gene_history
 data/*.gene_info
 data/bootstrap_cache_*
