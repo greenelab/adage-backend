@@ -25,12 +25,12 @@ with open(path) as read_file:
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets['db']['secret_key']
+SECRET_KEY = secrets['key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = secrets['db']['debug']
+DEBUG = secrets['debug']
 
-ALLOWED_HOSTS = secrets['db']['allowed_hosts'].strip().split(',')
+ALLOWED_HOSTS = secrets['allowed_hosts']
 
 # Application definition
 
