@@ -1,0 +1,40 @@
+version: 2
+
+jobs:
+  tests:
+    docker:
+      # Primary docker container where the tests will be run
+      - image: circleci/python:3.6.8
+
+      # Secondary docker container for database service
+      - image: postgres:11.4
+        environment:
+          POSTGRES_USER: circleci
+
+    working_directory: ~/py3-adage-backend
+
+    steps:
+      - checkout
+      - run:
+          name: Set up Postgres
+          command: |
+            #apt install postgresql-client --yes
+            createdb --host=localhost --username=circleci circleci_db
+            cp .circleci/ci_django.yml adage/adage/secrets.yml
+      - run:
+          name: Set up venv
+          command: |
+            pip install -r adage/requirements.txt
+      - run:
+          name: Backend tests
+          working_directory: ~/py3-adage-backend/adage
+          command: |
+            python manage.py makemigrations
+            python manage.py migrate
+            python manage.py test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - tests
