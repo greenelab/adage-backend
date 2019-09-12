@@ -18,8 +18,8 @@ jobs:
       - run:
           name: Set up Postgres
           command: |
-            sudo apt-get update
-            sudo apt-get upgrade --yes
+            sudo apt-get update --quiet
+            sudo apt-get upgrade --yes --quiet
             sudo apt-get install postgresql-client --yes
             createdb --host=localhost --username=circleci circleci_db
             cp .circleci/ci_django.yml adage/adage/secrets.yml
@@ -28,12 +28,12 @@ jobs:
           command: |
             mkdir -p ~/.venv
             python -m venv ~/.venv/adage
-            source ~/.venv/adage/bin/activate
-            pip install -r adage/requirements.txt
       - run:
           name: Backend tests
           working_directory: ~/py3-adage-backend/adage
           command: |
+            source ~/.venv/adage/bin/activate
+            pip install -r adage/requirements.txt
             python manage.py makemigrations
             python manage.py migrate
             #python manage.py test
