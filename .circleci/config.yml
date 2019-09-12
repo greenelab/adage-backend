@@ -33,7 +33,7 @@ jobs:
           working_directory: ~/py3-adage-backend/adage
           command: |
             source ~/.venv/adage/bin/activate
-            pip install -r adage/requirements.txt
+            pip install -r requirements.txt
             python manage.py makemigrations
             python manage.py migrate
             #python manage.py test
