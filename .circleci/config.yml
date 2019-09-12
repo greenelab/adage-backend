@@ -27,16 +27,17 @@ jobs:
           name: Set up venv
           command: |
             mkdir -p ~/.venv
-            python -m venv ~/.venv/adage
+            python3 -m venv ~/.venv/adage
       - run:
           name: Backend tests
           working_directory: ~/py3-adage-backend/adage
           command: |
             source ~/.venv/adage/bin/activate
+            pip install pip --upgrade
             pip install -r requirements.txt
-            python manage.py makemigrations
-            python manage.py migrate
-            #python manage.py test
+            python3 manage.py makemigrations
+            python3 manage.py migrate
+            python3 manage.py test
 
 workflows:
   version: 2
