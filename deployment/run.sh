@@ -21,9 +21,9 @@ sudo apt install certbot python-certbot-nginx -y
 sudo apt-get install libpq-dev
 
 # Create venv
-mkdir ~/.venv
-python3 -m venv ~/.venv/adage
-source ~/.venv/adage/bin/activate
+mkdir $HOME/.venv
+python3 -m venv $HOME/.venv/adage
+source $HOME/.venv/adage/bin/activate
 
 # Clone code and install PyPI packages
 cd && git clone https://github.com/greenelab/py3-adage-backend.git
@@ -33,28 +33,28 @@ cd && git clone https://github.com/greenelab/py3-adage-backend.git
 
 # Upgrade pip, then install all required PyPI packages
 pip install pip --upgrade
-pip install -r ~/py3-adage-backend/adage/requirements.txt
+pip install -r $HOME/py3-adage-backend/adage/requirements.txt
 
-# Create "secrets.yml" in ~/py3-adage-backend/adage/adage/
+# Create "secrets.yml" in $HOME/py3-adage-backend/adage/adage/
 # ... ...
 
 # Create static directory and have it populated so that the Django REST
 # Framework API view can be rendered correctly.
-mkdir -p ~/www/static
-~/py3-adage-backend/adage/manage.py collectstatic
+mkdir -p $HOME/www/static
+$HOME/py3-adage-backend/adage/manage.py collectstatic
 
 # Nginx config
 sudo rm -f /etc/nginx/sites-enabled/default
-sudo cp ~/py3-adage-backend/deployment/nginx.conf /etc/nginx/sites-available/adage.conf
+sudo cp $HOME/py3-adage-backend/deployment/nginx.conf /etc/nginx/sites-available/adage.conf
 cd /etc/nginx/sites-enabled/
 sudo ln -s ../sites-available/adage.conf .
 
 # Supervisor config
-sudo cp ~/py3-adage-backend/deployment/supervisor-adage.conf /etc/supervisor/conf.d/adage-gunicorn.conf
+sudo cp $HOME/py3-adage-backend/deployment/supervisor-adage.conf /etc/supervisor/conf.d/adage-gunicorn.conf
 # create log file
 sudo touch /var/log/adage-gunicorn.log
 # Make "ubuntu" the owner of the log file
-sudo chown ubuntu:ubuntu /var/log/adage-gunicorn.log
+sudo chown nobody:nogroup /var/log/adage-gunicorn.log
 
 # Restart Supervisor and Nginx
 sudo systemctl restart supervisor

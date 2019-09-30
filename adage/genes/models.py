@@ -10,8 +10,7 @@ num = re.compile(r'[0-9]')
 
 
 class Gene(models.Model):
-    """
-    The class 'Gene' extends the Model class in Django. For more information,
+    """The class 'Gene' extends the Model class in Django. For more information,
     see: https://docs.djangoproject.com/en/dev/topics/db/models/
 
     Genes will be added from an online database like 'Entrez', using the Django

@@ -29,7 +29,6 @@ class Experiment(models.Model):
 
 # TODO: implement absolute urls for Experiments. see
 #  https://docs.djangoproject.com/en/1.8/ref/models/instances/#get-absolute-url
-# TODO: implement a model for samples uploaded by users
 
 
 class Sample(models.Model):
@@ -131,8 +130,9 @@ class SampleAnnotation(models.Model):
         unique_together = (("annotation_type", "sample"),)
 
     def __str__(self):
-        return "%d: (%s for %s)" % \
-            (self.id, self.annotation_type.typename, self.sample.name)
+        return ("%d: (%s for %s)" %
+                (self.id, self.annotation_type.typename, self.sample.name)
+        )
 
     def get_experiments(self):
         return self.sample.experiments.all()
