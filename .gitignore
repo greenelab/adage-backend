@@ -1,0 +1,13 @@
+*~
+*.pyc
+*.sqlite3
+*.json_cache
+
+# Django config file
+adage/adage/config.yml
+
+# Adage-specific data files
+data/gene_history
+data/*.gene_info
+data/bootstrap_cache_*
+data/*_pickled_genesets

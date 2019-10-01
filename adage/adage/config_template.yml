@@ -1,0 +1,22 @@
+# Database configuration (required)
+db:
+  name: database_name
+  user: db_user
+  password: not_secure
+  host: database_hostname
+  port: database_port_number
+
+# Django secret key (required for production server).
+# Optional for dev server, default: "django_secret_key"
+key: 'django_secret_key'
+
+# Debug flag (optional, default: True)
+debug: True
+
+# Allowed hosts (optional, default: blank list)
+allowed_hosts:
+  - localhost
+  - 127.0.0.1
+
+# Directory that hosts static files (optional, default: "<BASE_DIR>/static"
+static_root: '/home/ubuntu/www/static/'
