@@ -32,9 +32,6 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
             ).filter(rank__gte=0.01
             ).order_by('-rank', 'accession')
 
-        for x in queryset:
-            print(x.rank)
-
         return queryset
 
 
