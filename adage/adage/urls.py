@@ -7,9 +7,9 @@ from analyze import views
 
 router = routers.DefaultRouter()
 router.register(r"mlmodels", views.MLModelViewSet)
+router.register(r"experiments", views.ExperimentViewSet, basename="experiment")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', views.api_root),
     path('api/v1/', include(router.urls)),
 ]
