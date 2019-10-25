@@ -1,9 +1,4 @@
-from rest_framework import filters
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from rest_framework.viewsets import ReadOnlyModelViewSet
-
 from .models import Experiment, MLModel
 from .serializers import ExperimentSerializer, MLModelSerializer
 
@@ -12,7 +7,6 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
     """Experiments viewset"""
     http_method_names = ['get']
     serializer_class = ExperimentSerializer
-    filter_backends = (filters.SearchFilter, )
 
     def get_queryset(self):
         queryset = Experiment.objects.all()
