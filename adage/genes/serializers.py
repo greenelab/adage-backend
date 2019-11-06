@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import (
-    Gene
-)
+from .models import Gene
 
 
 class GeneSerializer(serializers.ModelSerializer):

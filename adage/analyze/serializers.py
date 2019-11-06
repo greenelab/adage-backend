@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import (
-    Experiment, MLModel,
-)
+from .models import Experiment, MLModel
 
 
 class ExperimentSerializer(serializers.ModelSerializer):

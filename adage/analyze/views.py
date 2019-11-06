@@ -1,3 +1,4 @@
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from .models import Experiment, MLModel
 from .serializers import ExperimentSerializer, MLModelSerializer
@@ -10,21 +11,18 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Experiment.objects.all()
-        # 'search' parameter, which does full text search based on the
-        # following 3 fields in Experiment model:
+
+        # Extract the 'search' parameter from the incoming query and perform
+        # a full text search on the following 3 fields in Experiment model:
         # - "accession"
         # - "name"
         # - "description"
         search_str = self.request.query_params.get('search', None)
         if search_str is not None:
-            from django.contrib.postgres.search import (
-                SearchQuery, SearchRank, SearchVector
-            )
-            # In AWS Postgres RDS, the default config is 'simple'.
-            # We use 'english' to make the text search more flexible.
+            # Use 'english' config explicitly to make the text search
+            # more flexible.
             vector = SearchVector(
-                'accession', 'name', 'description',
-                config='english'
+                'accession', 'name', 'description', config='english'
             )
             query = SearchQuery(search_str, config='english')
             queryset = queryset.annotate(

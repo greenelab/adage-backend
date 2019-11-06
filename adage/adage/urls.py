@@ -9,7 +9,7 @@ from genes.views import GeneViewSet
 router = routers.DefaultRouter()
 router.register(r"experiments", ExperimentViewSet, basename="experiment")
 router.register(r"mlmodels", MLModelViewSet)
-router.register(r"genes", GeneViewSet,  basename="genes")
+router.register(r"genes", GeneViewSet,  basename="gene")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

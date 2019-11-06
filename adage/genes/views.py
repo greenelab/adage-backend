@@ -12,8 +12,8 @@ class GeneViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Gene.objects.all()
 
-        # 'search' parameter, which does full text search based on the
-        # following four fields in Gene model:
+        # Extract the 'search' parameter from the incoming query and perform
+        # a full text search on the following 4 fields in Gene model:
         # - "standard_name": highest priority (A: 1.0);
         # - "systematic_name": second highest priority (B: 0.4);
         # - "description" and "crossref__xrid": lowest priority (C: 0.2).
@@ -23,21 +23,25 @@ class GeneViewSet(ReadOnlyModelViewSet):
                 SearchQuery, SearchRank, SearchVector
             )
 
-            standard_vector = SearchVector('standard_name', weight='A')
-            systematic_vector = SearchVector('systematic_name', weight='B')
+            standard_vector = SearchVector(
+                'standard_name', weight='A', config='english'
+            )
+            systematic_vector = SearchVector(
+                'systematic_name', weight='B', config='english'
+            )
             other_vector = SearchVector(
-                'description', 'crossref__xrid', weight='C'
+                'description', 'crossref__xrid', weight='C', config='english'
             )
 
             vectors = standard_vector + systematic_vector + other_vector
-            query = SearchQuery(search_str)
+            query = SearchQuery(search_str, config='english')
             queryset = queryset.annotate(
                 rank=SearchRank(vectors, query)
             ).filter(rank__gte=0.1
             ).order_by('-rank', 'standard_name')
 
-        # 'autocomplete' parameter, which does trigram search based on the
-        # following three fields in Gene model:
+        # Extract the 'autocomplete' parameter from the incoming query and
+        # perform trigram search on the following 3 fields in Gene model:
         # - "standard_name" (multiplied by 2.0 to give it a higher priority)
         # - "systematic_name"
         # - "description"
