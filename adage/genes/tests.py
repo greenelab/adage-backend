@@ -95,7 +95,7 @@ class GeneSearchAPITests(APITestCase):
         https://github.com/greenelab/adage-server/blob/master/adage/analyze/tests.py
         """
 
-        organism = Organism.objects.create(
+        org456 = Organism.objects.create(
             taxonomy_id=456,
             common_name="org-456",
             scientific_name="scientific org-456",
@@ -108,11 +108,11 @@ class GeneSearchAPITests(APITestCase):
                 entrezid=(i + 100),
                 systematic_name="sys_name #" + str(i + 100),
                 standard_name="std_name #" + str(i + 100),
-                organism=organism
+                organism=org456
             )
 
         gene_ids = ",".join(
-            [str(g.id) for g in Gene.objects.filter(organism=organism)]
+            [str(g.id) for g in Gene.objects.filter(organism=org456)]
         )
 
         response = self.client.post(
