@@ -21,16 +21,16 @@ class GeneSearchAPITests(APITestCase):
             standard_name=None, systematic_name='b34', organism=self.organism
         )
 
-        std_name_prefix = 'foobar'
+        self.std_prefix = 'foobar'
         Gene.objects.create(
-            standard_name=std_name_prefix, organism=self.organism
+            standard_name=self.std_prefix, organism=self.organism
         )
 
         # Create 26 more genes whose standard names start with 'ans' and end
         # with an uppercase letter.
         for letter in string.ascii_uppercase:
             Gene.objects.create(
-                standard_name=(std_name_prefix + letter), organism=self.organism
+                standard_name=(self.std_prefix + letter), organism=self.organism
             )
 
         self.api_base = '/api/v1/genes/'
@@ -54,10 +54,14 @@ class GeneSearchAPITests(APITestCase):
         """Tests gene autocomplete API with a GET request."""
 
         response = self.client.get(
-            self.api_base, {'autocomplete': 'foobar', 'limit': 100}
+            self.api_base, {'autocomplete': self.std_prefix, 'limit': 100}
         )
         json_response = json.loads(response.content)
         self.assertEqual(len(json_response['results']), 27)
+
+        # The exact standard name match should have the highest rank:
+        best_gene_result = json_response['results'][0]
+        self.assertEqual(best_gene_result['standard_name'], self.std_prefix)
 
     def test_post_search(self):
         """Tests gene search API with a POST request."""
