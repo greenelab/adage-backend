@@ -5,7 +5,8 @@ from .serializers import ExperimentSerializer, MLModelSerializer
 
 
 class ExperimentViewSet(ReadOnlyModelViewSet):
-    """Experiments viewset"""
+    """Experiments viewset."""
+
     http_method_names = ['get']
     serializer_class = ExperimentSerializer
 
@@ -19,8 +20,7 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
         # - "description"
         search_str = self.request.query_params.get('search', None)
         if search_str is not None:
-            # Use 'english' config explicitly to make the text search
-            # more flexible.
+            # Use 'english' config to enable word stemming (default is "simple")
             vector = SearchVector(
                 'accession', 'name', 'description', config='english'
             )
@@ -34,7 +34,7 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
 
 
 class MLModelViewSet(ReadOnlyModelViewSet):
-    """Machine learning models viewset"""
+    """Machine learning models viewset."""
 
     http_method_names = ['get']
     queryset = MLModel.objects.all()
