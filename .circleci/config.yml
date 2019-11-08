@@ -21,7 +21,8 @@ jobs:
             sudo apt-get update --quiet
             sudo apt-get upgrade --yes --quiet
             sudo apt-get install postgresql-client --yes
-            createdb --host=localhost --username=circleci circleci_db
+            createdb --host=localhost circleci_db
+            psql --host=localhost template1 -c "CREATE EXTENSION IF NOT EXISTS pg_trgm"
             cp .circleci/ci_django.yml adage/adage/config.yml
       - run:
           name: Set up venv
