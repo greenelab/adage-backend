@@ -37,8 +37,6 @@ pip install -r $HOME/py3-adage-backend/adage/requirements.txt
 
 # Create "secrets.yml" in $HOME/py3-adage-backend/adage/adage/
 # ... ...
-# PostgreSQL specific: log into the database "template1" and run
-# this psql command: "CREATE EXTENSION IF NOT EXISTS pg_trgm"
 
 # Create static directory and have it populated so that the Django REST
 # Framework API view can be rendered correctly.
