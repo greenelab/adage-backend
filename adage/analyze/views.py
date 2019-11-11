@@ -1,8 +1,12 @@
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from .models import Experiment, MLModel
-from .serializers import ExperimentSerializer, MLModelSerializer
-
+from .models import Experiment, MLModel, Sample, Signature
+from .serializers import (
+    ExperimentSerializer,
+    MLModelSerializer,
+    SampleSerializer,
+    SignatureSerializer,
+)
 
 class ExperimentViewSet(ReadOnlyModelViewSet):
     """Experiments viewset."""
@@ -39,3 +43,19 @@ class MLModelViewSet(ReadOnlyModelViewSet):
     http_method_names = ['get']
     queryset = MLModel.objects.all()
     serializer_class = MLModelSerializer
+
+
+class SampleViewSet(ReadOnlyModelViewSet):
+    """Samples viewset."""
+
+    http_method_names = ['get']
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+
+
+class SignatureViewSet(ReadOnlyModelViewSet):
+    """Signatures viewset."""
+
+    http_method_names = ['get']
+    queryset = Signature.objects.all()
+    serializer_class = SignatureSerializer
