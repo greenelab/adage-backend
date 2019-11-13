@@ -34,6 +34,8 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
                 rank=SearchRank(vector, query)
             ).filter(rank__gte=0.05
             ).order_by('-rank', 'accession')
+        else:
+            queryset = queryset.order_by('accession')
 
         return queryset
 
