@@ -48,7 +48,6 @@ class ExperimentSerializer(serializers.ModelSerializer):
             previous_id = id
 
         samples.append(current_sample)
-        samples = sorted(samples, key=lambda s: s['id'])
         return samples
 
 
