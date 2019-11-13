@@ -20,11 +20,6 @@ class GeneViewSet(ModelViewSet):
         queryset = Gene.objects.all()
         json_req = json.loads(request.body)
 
-        # Handle 'search' parameter in `POST` request
-        search_str = json_req.get('search', None)
-        if search_str:
-            queryset = self.full_text_search(search_str, queryset)
-
         # Handle "pk__in" parameter in `POST` request
         gene_ids = json_req.get('pk__in', None)
         if gene_ids:
