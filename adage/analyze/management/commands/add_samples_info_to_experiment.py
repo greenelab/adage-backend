@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 """This management command collects information of samples that are
-associated with an experiment and combines them into a string, which
-is set to the value of `samples_info` field in `Experiment` model.
-This field will be used for full text search in `Experiment` API.
-The samples information includes:
+associated with each experiment and combines them into a string, then set
+it as the value of `samples_info` field in `Experiment` model. This field
+will be used for full text search in `Experiment` API. The samples information
+includes:
   * sample name and ml_data_source
   * annotation values associated with each sample
 
-IMPORTANT: This command should be run ONLY AFTER `Experiment`, `Sample`
-and `SampleAnnotation` tables have been populated completely.
+Note: This command should be run ONLY AFTER `Experiment`, `Sample` and
+`SampleAnnotation` tables have been populated completely.
 """
 
 from django.core.management.base import BaseCommand, CommandError
