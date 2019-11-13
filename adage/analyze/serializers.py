@@ -41,9 +41,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
                     'id': id,
                     'name': name,
                     'ml_data_source': ml_data_source,
-                    'annotations': {
-                        annotation_type: annotation_value
-                    }
+                    'annotations': {annotation_type: annotation_value}
                 }
             else:
                 current_sample['annotations'][annotation_type] = annotation_value
