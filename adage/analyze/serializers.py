@@ -49,7 +49,9 @@ class ExperimentSerializer(serializers.ModelSerializer):
                 current_sample['annotations'][annotation_type] = annotation_value
             previous_id = id
 
-        return sorted(samples, key=lambda s: s['id'])
+        samples.append(current_sample)
+        samples = sorted(samples, key=lambda s: s['id'])
+        return samples
 
 
 class SampleSerializer(serializers.ModelSerializer):
