@@ -23,6 +23,7 @@ class Experiment(models.Model):
     accession = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=1000)
     description = models.TextField()
+    samples_info = models.TextField(default="")
 
     def __str__(self):
         return self.accession
