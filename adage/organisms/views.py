@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from .models import Organism
+from .serializers import OrganismSerializer
 
-# Create your views here.
+
+class OrganismViewSet(ReadOnlyModelViewSet):
+    """Organisms viewset."""
+
+    http_method_names = ['get']
+    serializer_class = OrganismSerializer
+    queryset = Organism.objects.all()

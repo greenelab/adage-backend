@@ -50,6 +50,17 @@ class GeneSearchAPITests(APITestCase):
         self.assertEqual(best_gene_result['systematic_name'],
                          self.gene1.systematic_name)
 
+        # Search by gene2's systematic_name:
+        response = self.client.get(
+            self.api_base, {'search': self.gene2.systematic_name}
+        )
+        json_response = json.loads(response.content)
+        best_gene_result = json_response['results'][0]
+        self.assertEqual(best_gene_result['standard_name'],
+                         self.gene2.standard_name)
+        self.assertEqual(best_gene_result['systematic_name'],
+                         self.gene2.systematic_name)
+
     def test_get_autocomplete(self):
         """Tests gene autocomplete API with a GET request."""
 
@@ -62,21 +73,6 @@ class GeneSearchAPITests(APITestCase):
         # The exact standard name match should have the highest rank:
         best_gene_result = json_response['results'][0]
         self.assertEqual(best_gene_result['standard_name'], self.std_prefix)
-
-    def test_post_search(self):
-        """Tests gene search API with a POST request."""
-
-        # Search by gene2's systematic_name:
-        response = self.client.post(
-            self.api_base, {'search': self.gene2.systematic_name}, format='json'
-        )
-        json_response = json.loads(response.content)
-        best_gene_result = json_response['results'][0]
-        self.assertEqual(best_gene_result['standard_name'],
-                         self.gene2.standard_name)
-        self.assertEqual(best_gene_result['systematic_name'],
-                         self.gene2.systematic_name)
-
 
     def test_post_ids(self):
         """Tests a POST request of long list of gene IDs that is longer

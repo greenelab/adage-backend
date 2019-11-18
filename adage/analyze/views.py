@@ -26,13 +26,16 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
         if search_str is not None:
             # Use 'english' config to enable word stemming (default is "simple")
             vector = SearchVector(
-                'accession', 'name', 'description', config='english'
+                'accession', 'name', 'description', 'samples_info',
+                config='english'
             )
             query = SearchQuery(search_str, config='english')
             queryset = queryset.annotate(
                 rank=SearchRank(vector, query)
             ).filter(rank__gte=0.05
             ).order_by('-rank', 'accession')
+        else:
+            queryset = queryset.order_by('accession')
 
         return queryset
 

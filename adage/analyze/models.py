@@ -23,6 +23,7 @@ class Experiment(models.Model):
     accession = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=1000)
     description = models.TextField()
+    samples_info = models.TextField(default="")
 
     def __str__(self):
         return self.accession
@@ -168,9 +169,8 @@ class Signature(models.Model):
 
 
 class Activity(models.Model):
-    sample = models.ForeignKey(Sample, db_index=True, on_delete=models.PROTECT)
-    signature = models.ForeignKey(Signature, db_index=True,
-                                  on_delete=models.PROTECT)
+    sample = models.ForeignKey(Sample, on_delete=models.PROTECT)
+    signature = models.ForeignKey(Signature, on_delete=models.PROTECT)
     value = models.FloatField()
 
     def __str__(self):
