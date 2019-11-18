@@ -15,7 +15,7 @@ from organisms.views import OrganismViewSet
 router = routers.DefaultRouter()
 router.register(r"experiments", ExperimentViewSet, basename="experiment")
 router.register(r"genes", GeneViewSet, basename="gene")
-router.register(r"mlmodels", MLModelViewSet)
+router.register(r"models", MLModelViewSet)
 router.register(r"organisms", OrganismViewSet)
 router.register(r"samples", SampleViewSet)
 router.register(r"signatures", SignatureViewSet)
