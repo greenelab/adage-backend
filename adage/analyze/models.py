@@ -151,7 +151,6 @@ class MLModel(models.Model):
     g2g_edge_cutoff = models.FloatField(default=0.0)
 
     # Extra meta data fields
-    title = models.CharField(max_length=2048, blank=True)
     authors = models.TextField(null=True, blank=True)
     publisher = models.CharField(max_length=2048, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
