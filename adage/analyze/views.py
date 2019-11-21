@@ -1,18 +1,20 @@
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from .models import Experiment, MLModel, Sample, Signature
+from .models import Experiment, MLModel, Sample, Signature, Edge
 from .serializers import (
     ExperimentSerializer,
     MLModelSerializer,
     SampleSerializer,
     SignatureSerializer,
+    EdgeSerializer,
 )
 
 class ExperimentViewSet(ReadOnlyModelViewSet):
-    """Experiments viewset."""
+    """Experiment viewset. Supported parameters: `accession`, `search`"""
 
     http_method_names = ['get']
     serializer_class = ExperimentSerializer
+    filterset_fields = ['accession', ]
 
     def get_queryset(self):
         queryset = Experiment.objects.all()
@@ -41,7 +43,7 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
 
 
 class MLModelViewSet(ReadOnlyModelViewSet):
-    """Machine learning models viewset."""
+    """Machine learning model viewset."""
 
     http_method_names = ['get']
     queryset = MLModel.objects.all()
@@ -49,7 +51,7 @@ class MLModelViewSet(ReadOnlyModelViewSet):
 
 
 class SampleViewSet(ReadOnlyModelViewSet):
-    """Samples viewset."""
+    """Sample viewset."""
 
     http_method_names = ['get']
     queryset = Sample.objects.all()
@@ -57,8 +59,18 @@ class SampleViewSet(ReadOnlyModelViewSet):
 
 
 class SignatureViewSet(ReadOnlyModelViewSet):
-    """Signatures viewset."""
+    """Signature viewset. Supported parameter: `mlmodel`"""
 
     http_method_names = ['get']
     queryset = Signature.objects.all()
     serializer_class = SignatureSerializer
+    filterset_fields = ['mlmodel', ]
+
+
+class EdgeViewSet(ReadOnlyModelViewSet):
+    """Gene-gene edge viewset. Supported parameter: `mlmodel`"""
+
+    http_method_names = ['get']
+    queryset = Edge.objects.all()
+    serializer_class = EdgeSerializer
+    filterset_fields = ['mlmodel', ]

@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Experiment, MLModel, Sample, SampleAnnotation, Signature
+from .models import (
+    Experiment, MLModel, Sample, SampleAnnotation, Signature, Edge
+)
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -67,3 +69,9 @@ class SignatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Signature
         exclude = ['samples']
+
+
+class EdgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Edge
+        fields = '__all__'

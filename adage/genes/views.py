@@ -9,7 +9,7 @@ from .serializers import GeneSerializer
 
 
 class GeneViewSet(ModelViewSet):
-    """Genes viewset."""
+    """Genes viewset. Supported parameters: `search`, `autocomplete`"""
 
     http_method_names = ['get', 'post']
     serializer_class = GeneSerializer
