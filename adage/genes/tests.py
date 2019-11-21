@@ -33,7 +33,7 @@ class GeneSearchAPITests(APITestCase):
                 standard_name=(self.std_prefix + letter), organism=self.organism
             )
 
-        self.api_base = '/api/v1/genes/'
+        self.api_base = '/api/v1/gene/'
         self.client = APIClient()
 
     def test_get_search(self):
