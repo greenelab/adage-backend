@@ -147,8 +147,19 @@ class MLModel(models.Model):
     # edges (see "Edge" model below) are directed or not. Default is
     # False (not directed).
     directed_g2g_edge = models.BooleanField(default=False)
+
     g2g_edge_cutoff = models.FloatField(default=0.0)
-    desc_html = models.CharField(max_length=2048, blank=True)
+
+    # Extra metadata fields
+    authors = models.TextField(null=True, blank=True)
+    publisher = models.CharField(max_length=2048, null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    affiliations = models.TextField(null=True, blank=True)
+    funders = models.TextField(null=True, blank=True)
+    description = models.CharField(max_length=2048, null=True, blank=True)
+    url = models.CharField(max_length=2048, null=True, blank=True)
+    references = models.TextField(null=True, blank=True)
+    license = models.CharField(max_length=2048, null=True, blank=True)
 
     def __str__(self):
         edge_info = "directed" if self.directed_g2g_edge else "undirected"
