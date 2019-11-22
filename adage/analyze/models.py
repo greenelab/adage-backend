@@ -152,7 +152,7 @@ class MLModel(models.Model):
 
     # Extra metadata fields
     authors = models.TextField(null=True, blank=True)
-    publisher = models.CharField(max_length=2048, null=True, blank=True)
+    journal = models.CharField(max_length=2048, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
     affiliations = models.TextField(null=True, blank=True)
     funders = models.TextField(null=True, blank=True)
