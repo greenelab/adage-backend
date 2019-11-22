@@ -40,7 +40,7 @@ pip install -r $HOME/py3-adage-backend/adage/requirements.txt
 
 # Create static directory and have it populated so that the Django REST
 # Framework API view can be rendered correctly.
-mkdir -p $HOME/www/static
+mkdir -p $HOME/www/api/static
 $HOME/py3-adage-backend/adage/manage.py collectstatic
 
 # Nginx config
