@@ -18,9 +18,9 @@ type is "High weight genes", we will type:
 "High-weight genes"
 
 IMPORTANT: Before running this command, please make sure that:
-  (1) ml_model_name already exists in the database. If it doesn't, you can
-      use the management command "add_ml_model.py" to add it to the database.
-  (2) participation_type_name already exists in the database. If it doesn't,
+  (1) ml_model already exists in the database. If it doesn't, you can use
+      the management command "add_ml_model.py" to add it to the database.
+  (2) participation_type already exists in the database. If it doesn't,
       you can use the management command "create_or_update_participation_type.py"
       to add it to the database.
 """
