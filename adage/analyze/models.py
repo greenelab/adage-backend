@@ -233,8 +233,10 @@ class Participation(models.Model):
     """
     signature = models.ForeignKey(Signature, on_delete=models.PROTECT)
     gene = models.ForeignKey(Gene, on_delete=models.PROTECT)
-    participation_type = models.ForeignKey(ParticipationType,
-                                           on_delete=models.PROTECT)
+    participation_type = models.ForeignKey(
+        ParticipationType, on_delete=models.PROTECT
+    )
+    weight = models.FloatField(null=True)
 
     class Meta:
         unique_together = ('signature', 'gene', 'participation_type')
