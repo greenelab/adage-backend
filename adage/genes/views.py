@@ -83,4 +83,14 @@ class GeneViewSet(ModelViewSet):
             ).filter(similarity__gte=0.1
             ).order_by('-similarity', 'standard_name')
 
+        # Substring exact match
+        substr = self.request.query_params.get('substr', None)
+        if substr is not None:
+            from django.db.models import Q
+            queryset = queryset.filter(
+                Q(standard_name__icontains=substr) |
+                Q(systematic_name__icontains=substr) |
+                Q(description__icontains=substr)
+            )
+
         return queryset
