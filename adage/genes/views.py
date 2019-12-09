@@ -9,7 +9,7 @@ from .serializers import GeneSerializer
 
 
 class GeneViewSet(ModelViewSet):
-    """Genes viewset. Supported parameters: `search`, `autocomplete`"""
+    """Genes viewset. Supported parameters: `search`, `autocomplete`, `substr`"""
 
     http_method_names = ['get', 'post']
     serializer_class = GeneSerializer
@@ -74,12 +74,12 @@ class GeneViewSet(ModelViewSet):
         # - "description"
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
+            from django.db.models import F
             queryset = queryset.annotate(
-                similarity=(
-                    TrigramSimilarity('standard_name', similarity_str) * 2.0 +
-                    TrigramSimilarity('systematic_name', similarity_str) +
-                    TrigramSimilarity('description', similarity_str)
-                )
+                std_similarity=TrigramSimilarity('standard_name', similarity_str),
+                sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
+                desc_similarity=TrigramSimilarity('description', similarity_str)
+            ).annotate(similarity=F('std_similarity') + F('sys_similarity') + F('desc_similarity')
             ).filter(similarity__gte=0.1
             ).order_by('-similarity', 'standard_name')
 
