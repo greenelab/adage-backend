@@ -1,18 +1,17 @@
 import json
 from django.db.models import Case, CharField, F, Q, Value, When
 from django.db.models.functions import Cast, Greatest
-
 from django.contrib.postgres.search import (
     SearchQuery, SearchRank, SearchVector, TrigramSimilarity
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Gene
-from .serializers import GeneSerializer
+from genes.models import Gene
+from genes.serializers import GeneSerializer
 
 
 class GeneViewSet(ModelViewSet):
-    """Genes viewset. Supported parameters: `search`, `autocomplete`, `substr`"""
+    """Genes viewset. Supported parameters: `search`, `autocomplete`"""
 
     http_method_names = ['get', 'post']
     serializer_class = GeneSerializer
@@ -75,6 +74,7 @@ class GeneViewSet(ModelViewSet):
         # - "standard_name" (multiplied by 2.0 to give it a higher priority)
         # - "systematic_name"
         # - "description"
+        # - entrezid" (converted to string)
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
             queryset = queryset.annotate(
@@ -111,14 +111,5 @@ class GeneViewSet(ModelViewSet):
                 )
             ).filter(similarity__gte=0.1
             ).order_by('-similarity', 'standard_name')
-
-        # Substring exact match
-        substr = self.request.query_params.get('substr', None)
-        if substr is not None:
-            queryset = queryset.filter(
-                Q(standard_name__icontains=substr) |
-                Q(systematic_name__icontains=substr) |
-                Q(description__icontains=substr)
-            )
 
         return queryset
