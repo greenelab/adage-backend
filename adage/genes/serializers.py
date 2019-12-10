@@ -4,9 +4,7 @@ from django.db.models.fields import FloatField
 
 class GeneSerializer(serializers.ModelSerializer):
     # Extra fields for similarity search
-    std_similarity = serializers.FloatField()
-    sys_similarity = serializers.FloatField()
-    desc_similarity = serializers.FloatField()
+    max_similarity_field = serializers.CharField(default=None)
 
     class Meta:
         model = Gene

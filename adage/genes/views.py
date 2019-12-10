@@ -1,4 +1,7 @@
 import json
+from django.db.models import Case, CharField, F, Q, Value, When
+from django.db.models.functions import Cast, Greatest
+
 from django.contrib.postgres.search import (
     SearchQuery, SearchRank, SearchVector, TrigramSimilarity
 )
@@ -74,19 +77,44 @@ class GeneViewSet(ModelViewSet):
         # - "description"
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
-            from django.db.models import F
             queryset = queryset.annotate(
+                eid_str=Cast('entrezid', output_field=CharField())
+            ).annotate(
                 std_similarity=TrigramSimilarity('standard_name', similarity_str),
                 sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
-                desc_similarity=TrigramSimilarity('description', similarity_str)
-            ).annotate(similarity=F('std_similarity') + F('sys_similarity') + F('desc_similarity')
+                desc_similarity=TrigramSimilarity('description', similarity_str),
+                eid_similarity=TrigramSimilarity('eid_str', similarity_str),
+            ).annotate(
+                similarity=(
+                    F('std_similarity') + F('sys_similarity') +
+                    F('desc_similarity') + F('eid_similarity')
+                ),
+                max_similarity=Greatest(
+                    'std_similarity', 'sys_similarity',
+                    'desc_similarity', 'eid_similarity'
+                )
+            ).annotate(
+                max_similarity_field=Case(
+                    When(std_similarity__gte=F('max_similarity'),
+                         then=Value("standard_name")
+                    ),
+                    When(sys_similarity__gte=F('max_similarity'),
+                         then=Value("systematic_name")
+                    ),
+                    When(desc_similarity__gte=F('max_similarity'),
+                         then=Value("description")
+                    ),
+                    When(eid_similarity__gte=F('eid_similarity'),
+                         then=Value("entrezid")
+                    ),
+                    output_field=CharField(),
+                )
             ).filter(similarity__gte=0.1
             ).order_by('-similarity', 'standard_name')
 
         # Substring exact match
         substr = self.request.query_params.get('substr', None)
         if substr is not None:
-            from django.db.models import Q
             queryset = queryset.filter(
                 Q(standard_name__icontains=substr) |
                 Q(systematic_name__icontains=substr) |
