@@ -1,11 +1,13 @@
 import json
+from django.db.models import Case, CharField, F, Q, Value, When
+from django.db.models.functions import Cast, Greatest
 from django.contrib.postgres.search import (
     SearchQuery, SearchRank, SearchVector, TrigramSimilarity
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Gene
-from .serializers import GeneSerializer
+from genes.models import Gene
+from genes.serializers import GeneSerializer
 
 
 class GeneViewSet(ModelViewSet):
@@ -72,13 +74,46 @@ class GeneViewSet(ModelViewSet):
         # - "standard_name" (multiplied by 2.0 to give it a higher priority)
         # - "systematic_name"
         # - "description"
+        # - entrezid" (converted to string)
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
             queryset = queryset.annotate(
+                eid_str=Case(
+                    When(entrezid__isnull=False,
+                         then=Cast('entrezid', output_field=CharField())
+                    ),
+                    default=Value(''),
+                    output_field=CharField(),
+                )
+            ).annotate(
+                std_similarity=TrigramSimilarity('standard_name', similarity_str),
+                sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
+                desc_similarity=TrigramSimilarity('description', similarity_str),
+                eid_similarity=TrigramSimilarity('eid_str', similarity_str),
+            ).annotate(
                 similarity=(
-                    TrigramSimilarity('standard_name', similarity_str) * 2.0 +
-                    TrigramSimilarity('systematic_name', similarity_str) +
-                    TrigramSimilarity('description', similarity_str)
+                    F('std_similarity') + F('sys_similarity') +
+                    F('desc_similarity') + F('eid_similarity')
+                ),
+                max_similarity=Greatest(
+                    'std_similarity', 'sys_similarity',
+                    'desc_similarity', 'eid_similarity'
+                )
+            ).annotate(
+                max_similarity_field=Case(
+                    When(std_similarity__gte=F('max_similarity'),
+                         then=Value("standard_name")
+                    ),
+                    When(sys_similarity__gte=F('max_similarity'),
+                         then=Value("systematic_name")
+                    ),
+                    When(desc_similarity__gte=F('max_similarity'),
+                         then=Value("description")
+                    ),
+                    When(eid_similarity__gte=F('eid_similarity'),
+                         then=Value("entrezid")
+                    ),
+                    output_field=CharField(),
                 )
             ).filter(similarity__gte=0.1
             ).order_by('-similarity', 'standard_name')
