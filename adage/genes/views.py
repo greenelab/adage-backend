@@ -116,6 +116,6 @@ class GeneViewSet(ModelViewSet):
                     output_field=CharField(),
                 )
             ).filter(similarity__gte=0.1
-            ).order_by('-similarity', 'standard_name')
+            ).order_by('-max_similarity', '-similarity', 'standard_name')
 
         return queryset
