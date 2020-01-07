@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import (
-    Experiment, MLModel, Sample, SampleAnnotation, Signature, Edge
+    Experiment, MLModel, Sample, SampleAnnotation, Signature, Edge,
+    ParticipationType, Participation,
 )
 
 
@@ -74,4 +75,16 @@ class SignatureSerializer(serializers.ModelSerializer):
 class EdgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Edge
+        fields = '__all__'
+
+
+class ParticipationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParticipationType
+        fields = '__all__'
+
+
+class ParticipationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participation
         fields = '__all__'

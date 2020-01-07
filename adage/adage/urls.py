@@ -9,6 +9,8 @@ from analyze.views import (
     MLModelViewSet,
     SampleViewSet,
     SignatureViewSet,
+    ParticipationTypeViewSet,
+    ParticipationViewSet,
 )
 from genes.views import GeneViewSet
 from organisms.views import OrganismViewSet
@@ -21,6 +23,12 @@ router.register(r"model", MLModelViewSet)
 router.register(r"organism", OrganismViewSet)
 router.register(r"sample", SampleViewSet)
 router.register(r"signature", SignatureViewSet)
+router.register(r"participationtype", ParticipationTypeViewSet)
+router.register(
+    r"participation",
+    ParticipationViewSet,
+    basename='participation'
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
