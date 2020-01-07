@@ -85,6 +85,9 @@ class ParticipationTypeSerializer(serializers.ModelSerializer):
 
 
 class ParticipationSerializer(serializers.ModelSerializer):
+    # Full information of participation_type (instead of a plain ID)
+    participation_type = ParticipationTypeSerializer()
+
     class Meta:
         model = Participation
         fields = '__all__'
