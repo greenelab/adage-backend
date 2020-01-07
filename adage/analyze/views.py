@@ -93,7 +93,7 @@ class ParticipationTypeViewSet(ReadOnlyModelViewSet):
 class ParticipationViewSet(ReadOnlyModelViewSet):
     """
     Signature-gene participation viewset.
-    Supported parameter: `related_genes`.
+    Supported parameter: `related-genes`.
     """
 
     http_method_names = ['get']
@@ -102,7 +102,7 @@ class ParticipationViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Participation.objects.all()
 
-        related_genes = self.request.query_params.get('related_genes', None)
+        related_genes = self.request.query_params.get('related-genes', None)
         if related_genes:
             try:
                 query_genes = {int(id) for id in related_genes.split(',')}
