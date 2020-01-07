@@ -1,12 +1,18 @@
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from .models import Experiment, MLModel, Sample, Signature, Edge
+from rest_framework.exceptions import ParseError
+from .models import (
+    Experiment, MLModel, Sample, Signature, Edge, ParticipationType,
+    Participation
+)
 from .serializers import (
     ExperimentSerializer,
     MLModelSerializer,
     SampleSerializer,
     SignatureSerializer,
     EdgeSerializer,
+    ParticipationTypeSerializer,
+    ParticipationSerializer,
 )
 
 class ExperimentViewSet(ReadOnlyModelViewSet):
@@ -74,3 +80,41 @@ class EdgeViewSet(ReadOnlyModelViewSet):
     queryset = Edge.objects.all()
     serializer_class = EdgeSerializer
     filterset_fields = ['mlmodel', ]
+
+
+class ParticipationTypeViewSet(ReadOnlyModelViewSet):
+    """ParticipationType viewset."""
+
+    http_method_names = ['get']
+    queryset = ParticipationType.objects.all()
+    serializer_class = ParticipationTypeSerializer
+
+
+class ParticipationViewSet(ReadOnlyModelViewSet):
+    """
+    Signature-gene participation viewset.
+    Supported parameter: `related_genes`.
+    """
+
+    http_method_names = ['get']
+    serializer_class = ParticipationSerializer
+
+    def get_queryset(self):
+        queryset = Participation.objects.all()
+
+        related_genes = self.request.query_params.get('related_genes', None)
+        if related_genes:
+            try:
+                query_genes = {int(id) for id in related_genes.split(',')}
+            except ValueError:
+                raise ParseError(
+                    {'error': f'Invalid gene IDs: {related_genes}'}
+                )
+
+            signatures = queryset.filter(
+                gene__in=query_genes
+            ).values('signature').distinct()
+
+            queryset = queryset.filter(signature__in=signatures)
+
+        return queryset
