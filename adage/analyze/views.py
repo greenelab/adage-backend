@@ -3,7 +3,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.exceptions import ParseError
 from .models import (
     Experiment, MLModel, Sample, Signature, Edge, ParticipationType,
-    Participation
+    Participation,
 )
 from .serializers import (
     ExperimentSerializer,
