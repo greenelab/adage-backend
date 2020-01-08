@@ -11,7 +11,10 @@ from genes.serializers import GeneSerializer
 
 
 class GeneViewSet(ModelViewSet):
-    """Genes viewset. Supported parameters: `search`, `autocomplete`"""
+    """
+    Gene viewset.
+    Supported parameters: `organism`, `search`, `autocomplete`.
+    """
 
     http_method_names = ['get', 'post']
     serializer_class = GeneSerializer
