@@ -15,6 +15,7 @@ class GeneViewSet(ModelViewSet):
 
     http_method_names = ['get', 'post']
     serializer_class = GeneSerializer
+    filterset_fields = ['organism', ]
 
     def create(self, request):
         """This method takes care of `POST` requests."""
