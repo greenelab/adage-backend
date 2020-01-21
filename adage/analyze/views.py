@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.exceptions import ParseError
@@ -74,13 +75,36 @@ class SignatureViewSet(ReadOnlyModelViewSet):
 
 
 class EdgeViewSet(ReadOnlyModelViewSet):
-    """Gene-gene edge viewset. Supported parameter: `mlmodel`"""
+    """
+    Gene-gene edge viewset.
+    Supported parameter: `mlmodel`, `genes`.
+    """
 
     http_method_names = ['get']
-    queryset = Edge.objects.all()
     serializer_class = EdgeSerializer
     filterset_fields = ['mlmodel', ]
 
+    def get_queryset(self):
+        queryset = Edge.objects.all()
+        genes = self.request.query_params.get('genes', None)
+        if genes:
+            try:
+                gene_ids = {int(id) for id in genes.split(',')}
+            except ValueError:
+                raise ParseError(
+                    {'error': f'gene IDs not integers: {genes}'}
+                )
+            qset = Q(gene1__in=gene_ids) | Q(gene2__in=gene_ids)
+            direct_edges = queryset.filter(qset).distinct()
+            related_genes = set()
+            for e in direct_edges:
+                related_genes.add(e.gene1)
+                related_genes.add(e.gene2)
+            queryset = queryset.filter(
+                gene1__in=related_genes, gene2__in=related_genes
+            ).distinct()
+
+        return queryset.order_by('-weight')
 
 class ParticipationTypeViewSet(ReadOnlyModelViewSet):
     """ParticipationType viewset."""
