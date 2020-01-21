@@ -92,7 +92,7 @@ class EdgeViewSet(ReadOnlyModelViewSet):
                 gene_ids = {int(id) for id in genes.split(',')}
             except ValueError:
                 raise ParseError(
-                    {'error': f'Invalid gene IDs: {genes}'}
+                    {'error': f'gene IDs not integers: {genes}'}
                 )
             qset = Q(gene1__in=gene_ids) | Q(gene2__in=gene_ids)
             direct_edges = queryset.filter(qset).distinct()
