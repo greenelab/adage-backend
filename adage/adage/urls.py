@@ -16,7 +16,7 @@ from genes.views import GeneViewSet
 from organisms.views import OrganismViewSet
 
 router = routers.DefaultRouter()
-router.register(r"edge", EdgeViewSet)
+router.register(r"edge", EdgeViewSet, basename='edge')
 router.register(r"experiment", ExperimentViewSet, basename="experiment")
 router.register(r"gene", GeneViewSet, basename="gene")
 router.register(r"model", MLModelViewSet)
