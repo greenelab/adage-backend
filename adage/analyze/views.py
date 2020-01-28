@@ -82,10 +82,22 @@ class EdgeViewSet(ReadOnlyModelViewSet):
 
     http_method_names = ['get']
     serializer_class = EdgeSerializer
-    filterset_fields = ['mlmodel', ]
 
     def get_queryset(self):
         queryset = Edge.objects.all()
+
+        # If "mlmodel" parameter is found, always handle it first.
+        mlmodel = self.request.query_params.get('mlmodel', None)
+        if mlmodel:
+            try:
+                mlmodel_id = int(mlmodel)
+            except ValueError:
+                raise ParseError(
+                    {'error': f'mlmodel not an integer: {mlmodel}'}
+                )
+            queryset = queryset.filter(mlmodel=mlmodel_id)
+
+        # Handle "genes" parameter
         genes = self.request.query_params.get('genes', None)
         if genes:
             try:
