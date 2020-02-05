@@ -56,9 +56,21 @@ class ExperimentSerializer(serializers.ModelSerializer):
 
 
 class SampleSerializer(serializers.ModelSerializer):
+    annotations = serializers.SerializerMethodField()
+
+    def get_annotations(self, record):
+        qs = SampleAnnotation.objects.filter(sample=record).values(
+            'annotation_type__typename', 'text'
+        )
+        annotations = dict()
+        for sa in qs:
+            k, v = sa['annotation_type__typename'], sa['text']
+            annotations[k] = v
+        return annotations
+
     class Meta:
         model = Sample
-        fields = '__all__'
+        fields = ('id', 'name', 'ml_data_source', 'annotations')
 
 
 class MLModelSerializer(serializers.ModelSerializer):
