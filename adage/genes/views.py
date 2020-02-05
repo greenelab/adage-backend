@@ -114,7 +114,7 @@ class GeneViewSet(ModelViewSet):
                     When(desc_similarity__gte=F('max_similarity'),
                          then=Value("description")
                     ),
-                    When(eid_similarity__gte=F('eid_similarity'),
+                    When(eid_similarity__gte=F('max_similarity'),
                          then=Value("entrezid")
                     ),
                     output_field=CharField(),
