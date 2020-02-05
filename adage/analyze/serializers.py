@@ -12,8 +12,9 @@ class ExperimentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Experiment
-        fields = ('accession', 'name', 'description', 'samples')
+        fields = ('accession', 'name', 'description', 'samples', 'max_similarity_field')
 
+    max_similarity_field = serializers.CharField(default=None)
     samples = serializers.SerializerMethodField()
 
     def get_samples(self, record):

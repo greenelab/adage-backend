@@ -1,5 +1,8 @@
-from django.db.models import Q
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Case, CharField, F, Q, Value, When
+from django.db.models.functions import Greatest
+from django.contrib.postgres.search import (
+    SearchQuery, SearchRank, SearchVector, TrigramSimilarity
+)
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.exceptions import ParseError
 from .models import (
@@ -17,20 +20,23 @@ from .serializers import (
 )
 
 class ExperimentViewSet(ReadOnlyModelViewSet):
-    """Experiment viewset. Supported parameters: `accession`, `search`"""
+    """
+    Experiment viewset.
+    Supported parameters: `accession`, `autocomplete`, `search`.
+    """
 
-    http_method_names = ['get']
     serializer_class = ExperimentSerializer
     filterset_fields = ['accession', ]
 
     def get_queryset(self):
-        queryset = Experiment.objects.all()
+        queryset = Experiment.objects.all().order_by('accession')
 
         # Extract the 'search' parameter from the incoming query and perform
-        # a full text search on the following 3 fields in Experiment model:
+        # a full text search on the following fields in Experiment model:
         # - "accession"
         # - "name"
         # - "description"
+        # - "samples_info"
         search_str = self.request.query_params.get('search', None)
         if search_str is not None:
             # Use 'english' config to enable word stemming (default is "simple")
@@ -43,8 +49,48 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
                 rank=SearchRank(vector, query)
             ).filter(rank__gte=0.05
             ).order_by('-rank', 'accession')
-        else:
-            queryset = queryset.order_by('accession')
+
+        # Extract the 'autocomplete' parameter from the incoming query and
+        # perform trigram search on the following fields in Experiment model:
+        # - "accession"
+        # - "name"
+        # - "description"
+        # - "samples_info"
+        similarity_str = self.request.query_params.get('autocomplete', None)
+        if similarity_str is not None:
+            queryset = queryset.annotate(
+                accession_similarity=TrigramSimilarity('accession', similarity_str),
+                name_similarity=TrigramSimilarity('name', similarity_str),
+                desc_similarity=TrigramSimilarity('description', similarity_str),
+                samples_similarity=TrigramSimilarity('samples_info', similarity_str),
+            ).annotate(
+                similarity=(
+                    F('accession_similarity') + F('name_similarity') +
+                    F('desc_similarity') + F('samples_similarity')
+                ),
+                max_similarity=Greatest(
+                    'accession_similarity', 'name_similarity',
+                    'desc_similarity', 'samples_similarity'
+                )
+            ).annotate(
+                max_similarity_field=Case(
+                    When(accession_similarity__gte=F('max_similarity'),
+                         then=Value("accession")
+                    ),
+                    When(name_similarity__gte=F('max_similarity'),
+                         then=Value("name")
+                    ),
+                    When(desc_similarity__gte=F('max_similarity'),
+                         then=Value("description")
+                    ),
+                    When(samples_similarity__gte=F('max_similarity'),
+                         then=Value("samples")
+                    ),
+                    output_field=CharField(),
+                )
+            ).filter(similarity__gte=0.1
+            ).order_by('-max_similarity', '-similarity', 'accession')
+
 
         return queryset
 
@@ -52,7 +98,6 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
 class MLModelViewSet(ReadOnlyModelViewSet):
     """Machine learning model viewset."""
 
-    http_method_names = ['get']
     queryset = MLModel.objects.all()
     serializer_class = MLModelSerializer
 
@@ -60,7 +105,6 @@ class MLModelViewSet(ReadOnlyModelViewSet):
 class SampleViewSet(ReadOnlyModelViewSet):
     """Sample viewset."""
 
-    http_method_names = ['get']
     queryset = Sample.objects.all()
     serializer_class = SampleSerializer
 
@@ -68,7 +112,6 @@ class SampleViewSet(ReadOnlyModelViewSet):
 class SignatureViewSet(ReadOnlyModelViewSet):
     """Signature viewset. Supported parameter: `mlmodel`"""
 
-    http_method_names = ['get']
     queryset = Signature.objects.all()
     serializer_class = SignatureSerializer
     filterset_fields = ['mlmodel', ]
@@ -80,7 +123,6 @@ class EdgeViewSet(ReadOnlyModelViewSet):
     Supported parameter: `mlmodel`, `genes`.
     """
 
-    http_method_names = ['get']
     serializer_class = EdgeSerializer
 
     def get_queryset(self):
@@ -121,7 +163,6 @@ class EdgeViewSet(ReadOnlyModelViewSet):
 class ParticipationTypeViewSet(ReadOnlyModelViewSet):
     """ParticipationType viewset."""
 
-    http_method_names = ['get']
     queryset = ParticipationType.objects.all()
     serializer_class = ParticipationTypeSerializer
 
@@ -132,7 +173,6 @@ class ParticipationViewSet(ReadOnlyModelViewSet):
     Supported parameter: `related-genes`.
     """
 
-    http_method_names = ['get']
     serializer_class = ParticipationSerializer
 
     def get_queryset(self):

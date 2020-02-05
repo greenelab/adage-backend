@@ -6,6 +6,5 @@ from .serializers import OrganismSerializer
 class OrganismViewSet(ReadOnlyModelViewSet):
     """Organisms viewset."""
 
-    http_method_names = ['get']
     serializer_class = OrganismSerializer
     queryset = Organism.objects.all()
