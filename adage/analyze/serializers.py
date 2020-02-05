@@ -70,7 +70,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sample
-        fields = ('id', 'name', 'ml_data_source', 'annotations')
+        fields = ('id', 'name', 'ml_data_source', 'annotations', 'experiments')
 
 
 class MLModelSerializer(serializers.ModelSerializer):
