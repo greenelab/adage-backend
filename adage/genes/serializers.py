@@ -3,8 +3,8 @@ from .models import Gene
 from django.db.models.fields import FloatField
 
 class GeneSerializer(serializers.ModelSerializer):
-    # Extra field to indicate which field has the best match in trigram search
-    max_similarity_field = serializers.CharField(default=None)
+    # This field is only populated when `autocomplete` parameter is in the URL
+    max_similarity_field = serializers.CharField(required=False)
 
     class Meta:
         model = Gene
