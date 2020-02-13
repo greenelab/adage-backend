@@ -125,7 +125,7 @@ class SignatureViewSet(ReadOnlyModelViewSet):
 
 class ActivityViewSet(ReadOnlyModelViewSet):
     """
-    Signature viewset.
+    Activity viewset.
     Supported parameters: `mlmodel`, `samples`, `signatures`
     """
 
