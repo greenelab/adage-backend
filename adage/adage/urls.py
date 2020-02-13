@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 from analyze.views import (
+    ActivityViewSet,
     EdgeViewSet,
     ExperimentViewSet,
     MLModelViewSet,
@@ -16,6 +17,8 @@ from genes.views import GeneViewSet
 from organisms.views import OrganismViewSet
 
 router = routers.DefaultRouter()
+
+router.register(r"activity", ActivityViewSet, basename='activity')
 router.register(r"edge", EdgeViewSet, basename='edge')
 router.register(r"experiment", ExperimentViewSet, basename="experiment")
 router.register(r"gene", GeneViewSet, basename="gene")

@@ -1,57 +1,47 @@
 from rest_framework import serializers
 from .models import (
-    Experiment, MLModel, Sample, SampleAnnotation, Signature, Edge,
+    Experiment, MLModel, Sample, SampleAnnotation, Signature, Activity, Edge,
     ParticipationType, Participation,
 )
 
+class MLModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MLModel
+        fields = '__all__'
+
 
 class ExperimentSerializer(serializers.ModelSerializer):
-    """Experiment serializer that excludes `samples_info` field but
-    includes an extra `samples` field.
+    """
+    Experiment serializer excludes `samples_info` field but includes an
+    extra `samples` field with sample IDs and sample names.
     """
 
     class Meta:
         model = Experiment
         fields = ('accession', 'name', 'description', 'samples', 'max_similarity_field')
 
-    max_similarity_field = serializers.CharField(default=None)
     samples = serializers.SerializerMethodField()
 
+    # This field is only populated when `autocomplete` parameter is in the URL
+    max_similarity_field = serializers.CharField(required=False)
+
     def get_samples(self, record):
-        """Collect samples dynamically and save them in a dictionary.
-        `sample_info` field has the same information but doesn't include
-        field names, so it is not user-friendly.
+        """
+        Collect sample IDs and names dynamically and save them in a dictionary.
         """
 
         samples_qs = Experiment.objects.filter(pk=record).values(
-            'sample__id', 'sample__name', 'sample__ml_data_source',
-            'sample__sampleannotation__annotation_type__typename',
-            'sample__sampleannotation__text'
+            'sample__id', 'sample__name'
         ).order_by('sample__id')
 
         samples = list()
-        previous_id = None
-        current_sample = None
         for s in samples_qs:
-            id = s['sample__id']
-            name = s['sample__name']
-            annotation_type = s['sample__sampleannotation__annotation_type__typename']
-            annotation_value = s['sample__sampleannotation__text']
-            if id != previous_id:
-                if current_sample:
-                    samples.append(current_sample)
-                ml_data_source = s['sample__ml_data_source']
-                current_sample = {
-                    'id': id,
-                    'name': name,
-                    'ml_data_source': ml_data_source,
-                    'annotations': {annotation_type: annotation_value}
-                }
-            else:
-                current_sample['annotations'][annotation_type] = annotation_value
-            previous_id = id
+            current_sample = {
+                'id': s['sample__id'],
+                'name':  s['sample__name']
+            }
+            samples.append(current_sample)
 
-        samples.append(current_sample)
         return samples
 
 
@@ -73,16 +63,16 @@ class SampleSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'ml_data_source', 'annotations', 'experiments')
 
 
-class MLModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MLModel
-        fields = '__all__'
-
-
 class SignatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Signature
         exclude = ['samples']
+
+
+class ActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Activity
+        exclude = ['id', ]
 
 
 class EdgeSerializer(serializers.ModelSerializer):

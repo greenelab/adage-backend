@@ -5,11 +5,14 @@ from django.contrib.postgres.search import (
 )
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.exceptions import ParseError
+
 from .models import (
-    Experiment, MLModel, Sample, Signature, Edge, ParticipationType,
-    Participation,
+    Experiment, MLModel, Sample, Signature, Activity, Edge,
+    ParticipationType, Participation,
 )
+
 from .serializers import (
+    ActivitySerializer,
     ExperimentSerializer,
     MLModelSerializer,
     SampleSerializer,
@@ -110,11 +113,63 @@ class SampleViewSet(ReadOnlyModelViewSet):
 
 
 class SignatureViewSet(ReadOnlyModelViewSet):
-    """Signature viewset. Supported parameter: `mlmodel`"""
+    """
+    Signature viewset.
+    Supported parameter: `mlmodel`
+    """
 
     queryset = Signature.objects.all()
     serializer_class = SignatureSerializer
     filterset_fields = ['mlmodel', ]
+
+
+class ActivityViewSet(ReadOnlyModelViewSet):
+    """
+    Activity viewset.
+    Supported parameters: `mlmodel`, `samples`, `signatures`
+    """
+
+    serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        queryset = Activity.objects.all()
+
+        # If "mlmodel" parameter is found in URL, always handle it first.
+        mlmodel = self.request.query_params.get('mlmodel', None)
+        if mlmodel:
+            try:
+                mlmodel_id = int(mlmodel)
+            except ValueError:
+                raise ParseError(
+                    {'error': f'mlmodel not an integer: {mlmodel}'}
+                )
+            queryset = queryset.filter(
+                signature__mlmodel=mlmodel_id
+            ).order_by('sample', 'signature')
+
+        # Handle "samples" parameter in URL
+        samples = self.request.query_params.get('samples', None)
+        if samples:
+            try:
+                sample_ids = {int(id) for id in samples.split(',')}
+            except ValueError:
+                raise ParseError(
+                    {'error': f'sample IDs not integers: {samples}'}
+                )
+            queryset = queryset.filter(sample__in=sample_ids).order_by('sample')
+
+        # Handle "signatures" parameter in URL
+        signatures = self.request.query_params.get('signatures', None)
+        if signatures:
+            try:
+                signature_ids = {int(id) for id in signatures.split(',')}
+            except ValueError:
+                raise ParseError(
+                    {'error': f'signature IDs not integers: {signatures}'}
+                )
+            queryset = queryset.filter(signature__in=signature_ids).order_by('signature')
+
+        return queryset
 
 
 class EdgeViewSet(ReadOnlyModelViewSet):
@@ -159,6 +214,7 @@ class EdgeViewSet(ReadOnlyModelViewSet):
             ).distinct()
 
         return queryset.order_by('-weight')
+
 
 class ParticipationTypeViewSet(ReadOnlyModelViewSet):
     """ParticipationType viewset."""
