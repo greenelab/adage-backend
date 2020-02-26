@@ -68,7 +68,7 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
                     'accession', similarity_str
                 )
             ).filter(
-                Q(accession_match__gt=0.3) |
+                Q(accession_match__gt=0.1) |
                 Q(name__icontains=similarity_str) |
                 Q(description__icontains=similarity_str)
             ).annotate(
