@@ -54,7 +54,7 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
             ).order_by('-rank', 'accession')
 
         # Extract the 'autocomplete' parameter from the incoming query and
-        # perform trigram search on "accession" field, and substring search on
+        # perform trigram search on "accession" field and substring search on
         # the following fields:
         # - "name"
         # - "description"
