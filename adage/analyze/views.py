@@ -58,9 +58,9 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
         # the following fields:
         # - "name"
         # - "description"
-        # The reason why trigram search on these three fields are not used is
-        # because the strings in these three fields are long, so most matches
-        # have much less similarity values in trigram search.
+        # The reason why trigram search is not used on these fields is because
+        # when values of these fields are long strings, trigram similarity
+        # score becomes tiny.
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
             queryset = queryset.annotate(
