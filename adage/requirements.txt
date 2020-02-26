@@ -3,5 +3,6 @@ django-cors-headers==3.2.1
 django-filter==2.2.0
 djangorestframework==3.11.0
 gunicorn==19.9.0
+Markdown==3.2.1
 psycopg2==2.8.4
 PyYAML==5.3

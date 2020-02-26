@@ -1,4 +1,4 @@
-from django.db.models import Case, CharField, F, Q, Value, When
+from django.db.models import Case, CharField, F, IntegerField, Q, Value, When
 from django.db.models.functions import Greatest
 from django.contrib.postgres.search import (
     SearchQuery, SearchRank, SearchVector, TrigramSimilarity
@@ -54,46 +54,44 @@ class ExperimentViewSet(ReadOnlyModelViewSet):
             ).order_by('-rank', 'accession')
 
         # Extract the 'autocomplete' parameter from the incoming query and
-        # perform trigram search on the following fields in Experiment model:
-        # - "accession"
+        # perform trigram search on "accession" field and substring search on
+        # the following fields:
         # - "name"
         # - "description"
-        # - "samples_info"
+        # The reason why trigram search is not used on these fields is because
+        # when values of these fields are long strings, trigram similarity
+        # score becomes tiny.
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
             queryset = queryset.annotate(
-                accession_similarity=TrigramSimilarity('accession', similarity_str),
-                name_similarity=TrigramSimilarity('name', similarity_str),
-                desc_similarity=TrigramSimilarity('description', similarity_str),
-                samples_similarity=TrigramSimilarity('samples_info', similarity_str),
-            ).annotate(
-                similarity=(
-                    F('accession_similarity') + F('name_similarity') +
-                    F('desc_similarity') + F('samples_similarity')
-                ),
-                max_similarity=Greatest(
-                    'accession_similarity', 'name_similarity',
-                    'desc_similarity', 'samples_similarity'
+                accession_match=TrigramSimilarity(
+                    'accession', similarity_str
                 )
+            ).filter(
+                Q(accession_match__gt=0.1) |
+                Q(name__icontains=similarity_str) |
+                Q(description__icontains=similarity_str)
+            ).annotate(
+                name_match=Case(
+                    When(name__icontains=similarity_str, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
+                desc_match=Case(
+                    When(description__icontains=similarity_str, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
             ).annotate(
                 max_similarity_field=Case(
-                    When(accession_similarity__gte=F('max_similarity'),
-                         then=Value("accession")
-                    ),
-                    When(name_similarity__gte=F('max_similarity'),
-                         then=Value("name")
-                    ),
-                    When(desc_similarity__gte=F('max_similarity'),
-                         then=Value("description")
-                    ),
-                    When(samples_similarity__gte=F('max_similarity'),
-                         then=Value("samples")
-                    ),
-                    output_field=CharField(),
+                    When(accession_match__gte=0.1, then=Value("accession")),
+                    When(name_match=1, then=Value("name")),
+                    When(desc_match=1, then=Value("description")),
+                    output_field=CharField()
                 )
-            ).filter(similarity__gte=0.1
-            ).order_by('-max_similarity', '-similarity', 'accession')
-
+            ).order_by(
+                '-accession_match', '-name_match', '-desc_match'
+            )
 
         return queryset
 
