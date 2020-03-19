@@ -215,19 +215,24 @@ class EdgeViewSet(ReadOnlyModelViewSet):
 
 
 class ParticipationTypeViewSet(ReadOnlyModelViewSet):
-    """ParticipationType viewset."""
+    """
+    ParticipationType viewset.
+    Supported parameter: `name`.
+    """
 
     queryset = ParticipationType.objects.all()
     serializer_class = ParticipationTypeSerializer
-
+    filterset_fields = ['name', ]
 
 class ParticipationViewSet(ReadOnlyModelViewSet):
     """
     Signature-gene participation viewset.
-    Supported parameter: `related-genes`.
+    Supported parameters: `signature`, `gene`, `participation_type`,
+    `related-genes`.
     """
 
     serializer_class = ParticipationSerializer
+    filterset_fields = ['signature', 'gene', 'participation_type', ]
 
     def get_queryset(self):
         queryset = Participation.objects.all()
