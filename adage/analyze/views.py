@@ -219,7 +219,7 @@ class ParticipationTypeViewSet(ReadOnlyModelViewSet):
 
     queryset = ParticipationType.objects.all()
     serializer_class = ParticipationTypeSerializer
-
+    filterset_fields = ['name', ]
 
 class ParticipationViewSet(ReadOnlyModelViewSet):
     """
@@ -228,6 +228,7 @@ class ParticipationViewSet(ReadOnlyModelViewSet):
     """
 
     serializer_class = ParticipationSerializer
+    filterset_fields = ['signature', 'gene', ]
 
     def get_queryset(self):
         queryset = Participation.objects.all()
