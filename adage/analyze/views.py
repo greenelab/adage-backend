@@ -215,7 +215,10 @@ class EdgeViewSet(ReadOnlyModelViewSet):
 
 
 class ParticipationTypeViewSet(ReadOnlyModelViewSet):
-    """ParticipationType viewset."""
+    """
+    ParticipationType viewset.
+    Supported parameter: `name`.
+    """
 
     queryset = ParticipationType.objects.all()
     serializer_class = ParticipationTypeSerializer
