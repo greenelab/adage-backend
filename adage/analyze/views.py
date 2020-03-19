@@ -224,7 +224,8 @@ class ParticipationTypeViewSet(ReadOnlyModelViewSet):
 class ParticipationViewSet(ReadOnlyModelViewSet):
     """
     Signature-gene participation viewset.
-    Supported parameter: `related-genes`.
+    Supported parameters: `signature`, `gene`, `participation_type`,
+    `related-genes`.
     """
 
     serializer_class = ParticipationSerializer
