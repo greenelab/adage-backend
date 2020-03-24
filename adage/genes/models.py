@@ -89,6 +89,34 @@ class Gene(models.Model):
 
         super(Gene, self).save(*args, **kwargs)  # Call the "real" save().
 
+    def get_external_url(self):
+        """
+        Returns the gene's external URL based on "url_template" field in
+        Organism model.
+        """
+
+        url_template = self.organism.url_template
+        if url_template is None:
+            return
+
+        partitions = url_template.rpartition('<')
+        if partitions[1] == '':  # '<' not found
+            return
+
+        url_head = partitions[0]
+        partitions = partitions[2].rpartition('>')
+        if partitions[1] == '':  # '>' not found
+            return
+
+        field_name = partitions[0]
+        if field_name == '' or not hasattr(self, field_name):
+            return
+
+        field_value = getattr(self, field_name)
+        url_tail = partitions[2]
+
+        return url_head + field_value + url_tail
+
 
 class CrossRefDB(models.Model):
     name = models.CharField(max_length=64, unique=True, db_index=True,

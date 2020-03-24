@@ -1,10 +1,13 @@
-"""This management command adds an organism to the database.
-The fields that it fills out are the ones specified in the `Organism` model.
+"""
+This management command creates or updates an organism in the database.
+The input arguments are the fields specified in the `Organism` model.
 The command should be launched like this:
 
-  python manage.py organisms_create_or_update --taxonomy_id=9606 \
---common_name="Human" --scientific_name="Homo sapiens"
+  python manage.py organisms_create_or_update \
+--taxonomy_id=9606 --common_name="Human" --scientific_name="Homo sapiens" \
+--url_template="http://www.example.com/?gene=<systematic_name>"
 
+Note that "--url_template" is optional. If not specified, it defaults to null.
 """
 
 from django.core.management.base import BaseCommand, CommandError
@@ -38,6 +41,12 @@ class Command(BaseCommand):
             help="Organism scientific/binomial name, e.g. 'Homo sapiens'"
         )
 
+        parser.add_argument(
+            '--url_template',
+            required=False,
+            dest='url_template',
+            help="URL template for genes of this organism"
+        )
 
     def handle(self, *args, **options):
         taxonomy_id = options['taxonomy_id']
@@ -46,6 +55,9 @@ class Command(BaseCommand):
         # and "scientific_name
         common_name = options['common_name'].strip()
         scientific_name = options['scientific_name'].strip()
+        url_template = None
+        if 'url_template' in options:
+            url_template = options['url_template'].strip()
 
         if common_name and scientific_name:
             # A 'slug' is a label for an object in django, which only contains
@@ -57,28 +69,30 @@ class Command(BaseCommand):
             print("Slug generated: %s" % slug)
 
             # If specified organism exists, update it with passed parameters
-            operation_str = "updated"
             try:
+                action_str = "updated"
                 org = Organism.objects.get(taxonomy_id=taxonomy_id)
                 org.common_name = common_name
                 org.scientific_name = scientific_name
-                org.slug = slug
+                org.slug = slug,
+                org.url_template=url_template
             # If specified organism doesn't exist, construct a new object
             except Organism.DoesNotExist:
-                org = Organism(taxonomy_id=taxonomy_id,
-                               common_name=common_name,
-                               scientific_name=scientific_name,
-                               slug=slug
+                action_str = "created"
+                org = Organism(
+                    taxonomy_id=taxonomy_id,
+                    common_name=common_name,
+                    scientific_name=scientific_name,
+                    slug=slug,
+                    url_template=url_template
                 )
-                operation_str = "created"
-
-            org.save()  # Save to the database.
+            org.save()
             self.stdout.write(
-                self.style.NOTICE("Organism " + operation_str + " successfully")
+                self.style.NOTICE(f"Organism {action_str} successfully")
             )
         else:
-            # Report an error if the user did not fill out all fields.
+            # Report an error when input arguments are incorrect.
             raise CommandError(
                 "Failed to add or update organism. " +
-                "Please check that all fields are filled correctly."
+                "Please check that input fields are correct."
             )
