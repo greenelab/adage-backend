@@ -18,8 +18,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Read secrets from YAML file
 path = os.path.join(BASE_DIR, 'adage', 'config.yml')
-with open(path) as read_file:
-    config = yaml.full_load(read_file)
+with open(path) as config_file:
+    config = yaml.full_load(config_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'organisms',
     'genes',
     'analyze',
+    'tribe_client',
 ]
 
 REST_FRAMEWORK = {
@@ -141,8 +142,29 @@ USE_TZ = True
 STATIC_ROOT = config.get('static_root', os.path.join(BASE_DIR, 'static'))
 STATIC_URL = '/static/'
 
+
 # CORS config
 # https://pypi.org/project/django-cors-headers/
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/v1/.*$'
 CORS_ALLOW_METHODS = ('GET', )
+
+
+# tribe_client config (optional)
+if 'tribe_client' in config:
+    if 'id' in config['tribe_client']:
+        TRIBE_ID = config['tribe_client']['id']
+    if 'secret' in config['tribe_client']:
+        TRIBE_SECRET = config['tribe_client']['secret']
+    if 'redirect_uri' in config['tribe_client']:
+        TRIBE_REDIRECT_URI = config['tribe_client']['redirect_uri']
+    if 'scope' in config['tribe_client']:
+        TRIBE_SCOPE = config['tribe_client']['scope']
+    if 'base_template' in config['tribe_client']:
+        TRIBE_CLIENT_BASE_TEMPLATE = config['tribe_client']['base_template']
+    if 'login_redirect' in config['tribe_client']:
+        TRIBE_LOGIN_REDIRECT = config['tribe_client']['login_redirect']
+    if 'logout_redirect' in config['tribe_client']:
+        TRIBE_LOGOUT_REDIRECT = config['tribe_client']['logout_redirect']
+    if 'public_geneset_folder' in config['tribe_client']:
+        PUBLIC_GENESET_FOLDER = config['tribe_client']['public_geneset_folder']

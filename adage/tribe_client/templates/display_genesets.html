@@ -1,0 +1,26 @@
+{% extends base_template %}
+
+{% block content %}
+
+<div class="">
+    <h2>{{tribe_user.username|capfirst}}'s Gene Sets</h2>
+    <br/>
+    <table class = "table table-striped">
+        <colgroup>
+            <col class="span3" />
+            <col class="span3" />
+            <col class="span5" />
+            <col class="span5" />
+        </colgroup>
+        <tr><th><a class="btn btn-primary" href="{{tribe_url}}/#/build">Create new on Tribe</a></th><th>Name</th><th>Genes</th><th>Description</th></tr>
+        {% for geneset in genesets %}
+        <tr>
+            <td><a href="{{tribe_url}}/#/use/detail/{{geneset.creator.username}}/{{geneset.slug}}">Edit on Tribe</a></td><td>{{ geneset.title }}</td>
+            <td>{% for annotation in geneset.tip.annotations %}{{annotation.gene.standard_name}} {% endfor %}</td>
+            <td>{{ geneset.abstract }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

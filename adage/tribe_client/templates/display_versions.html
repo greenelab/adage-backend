@@ -1,0 +1,25 @@
+{% extends base_template %}
+
+{% block content %}
+
+
+<br>
+<div style="position:relative;left:50px;top:30px;">
+
+    <table class = "table table-bordered" border="2">
+        <tr>
+        <th> Version </th>
+        <th> Genes   </th>
+        <th> Description </th>
+        </tr>
+
+        {% for version in versions %}
+        <tr>
+        <td>{{ version.ver_hash }}</td><td>{{ version.gene_list }}</td><td>{{ version.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+{% endblock %}
+
