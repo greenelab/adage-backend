@@ -1,0 +1,19 @@
+{% extends base_template %}
+
+{% block content %}
+
+<div class="well">
+    <h2>My Gene Sets</h2>
+    <br/>
+    <p>Manage your gene sets using <a href="{{ tribe_url }}">Tribe</a>:</p>
+
+    <div style="padding: 10px">
+        <a class="btn btn-primary" href="{{ tribe_url }}/accounts/create_temporary/">Create a temporary account (no email or password required)</a>
+        </br>
+        </br>
+        <a class="btn btn-primary" href="{{ access_code_url }}?response_type=code&client_id={{client_id}}&scope={{scope}}">Create / Sign in with a Tribe account</a>
+    </div>
+
+</div>
+
+{% endblock %}

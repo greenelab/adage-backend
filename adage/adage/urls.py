@@ -36,4 +36,5 @@ router.register(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
+    path('api/v1/tribe_client/', include('tribe_client.urls')),
 ]
