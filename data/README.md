@@ -5,7 +5,7 @@ during deployment.
 
    This file is decompressed from raw//Pseudomonas_aeruginosa_PAO1.gene_info.gz, which
 is downloaded from:
-[ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz](ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz)
+<ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz>
 
 2. **gene_history_208964**: gene history file of organism whose taxonomy ID is 208964.
 
