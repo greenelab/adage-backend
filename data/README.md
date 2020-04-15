@@ -4,8 +4,8 @@ during deployment.
 1. **Pseudomonas_aeruginosa_PAO1.gene_info**: PAO1 genes of `Pseudomonas` organism.
 
    This file is decompressed from raw//Pseudomonas_aeruginosa_PAO1.gene_info.gz, which
-   is downloaded from:
-   [ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz](ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz)
+is downloaded from:
+[ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz](ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz)
 
 2. **gene_history_208964**: gene history file of organism whose taxonomy ID is 208964.
 
@@ -25,7 +25,8 @@ during deployment.
    (zcat Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz | awk -F'","' '{if ($4 == "Pseudomonas aeruginosa UCBPP-PA14") print $2"\t"$5}') > pao1_to_pa14.tsv
    ```
    The URL is pointed to by the `CSV` button of `Ortholog Predictions` column in the table on
-[Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download). See the screenshot:
+[Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download), which is shown by the
+following sreenshot:
    <div align="center">
        <img src="screenshot_pseudomonas.png"</img>
    </div>
