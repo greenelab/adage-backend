@@ -5,7 +5,7 @@ during deployment.
 
    This file is decompressed from raw//Pseudomonas_aeruginosa_PAO1.gene_info.gz, which
    is downloaded from:
-   `ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz`
+   [ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz](ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Archaea_Bacteria/Pseudomonas_aeruginosa_PAO1.gene_info.gz)
 
 2. **gene_history_208964**: gene history file of organism whose taxonomy ID is 208964.
 
@@ -15,7 +15,7 @@ during deployment.
    gunzip -k gene_history.gz
    (head -1 gene_history; grep "^208964\t" gene_history) > gene_history_208964
    ```
-   The downloaded `gene_history.gz` is saved in `raw` subdirectory as a referenece.
+   The downloaded file `gene_history.gz` is saved in `raw` subdirectory as a referenece.
 
 3. **pao1_to_pa14.tsv**: maps a gene's PAO1 name to its PA14 names.
 
@@ -24,11 +24,11 @@ during deployment.
    wget http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_PAO1_107/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz
    (zcat Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz | awk -F'","' '{if ($4 == "Pseudomonas aeruginosa UCBPP-PA14") print $2"\t"$5}') > pao1_to_pa14.tsv
    ```
-   The URL is referred by the `CSV` button of `Ortholog Predictions` column in the table on
-`http://pseudomonas.com/strain/download` page. See the screenshot:
+   The URL is pointed to by the `CSV` button of `Ortholog Predictions` column in the table on
+[Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download). See the screenshot:
    <div align="center">
        <img src="screenshot_pseudomonas.png"</img>
    </div>
 
-   The downloaded `Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz` is saved in `raw`
+   The downloaded file `Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz` is saved in `raw`
    subdirectory as a reference.
