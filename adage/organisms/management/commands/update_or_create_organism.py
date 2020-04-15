@@ -3,7 +3,7 @@ This management command creates or updates an organism in the database.
 The input arguments are the fields specified in the `Organism` model.
 The command should be launched like this:
 
-  python manage.py organisms_create_or_update \
+  python manage.py update_or_create_organism \
 --taxonomy_id=9606 --common_name="Human" --scientific_name="Homo sapiens" \
 --url_template="http://www.example.com/?gene=<systematic_name>"
 
@@ -16,8 +16,10 @@ from organisms.models import Organism
 
 
 class Command(BaseCommand):
-    help = ("Adds a new organism into the database. Fields needed are: " +
-            "taxonomy_id, common_name, and scientific_name.")
+    help = (
+        "Adds a new organism into the database. Fields needed are: "
+        "taxonomy_id, common_name, scientific_name, and url_template (optional)"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -66,33 +68,24 @@ class Command(BaseCommand):
             # converts it to this format.  For more information, see:
             # http://stackoverflow.com/questions/427102/what-is-a-slug-in-django
             slug = slugify(scientific_name)
-            print("Slug generated: %s" % slug)
 
-            # If specified organism exists, update it with passed parameters
-            try:
-                action_str = "updated"
-                org = Organism.objects.get(taxonomy_id=taxonomy_id)
-                org.common_name = common_name
-                org.scientific_name = scientific_name
-                org.slug = slug,
-                org.url_template=url_template
-            # If specified organism doesn't exist, construct a new object
-            except Organism.DoesNotExist:
-                action_str = "created"
-                org = Organism(
-                    taxonomy_id=taxonomy_id,
-                    common_name=common_name,
-                    scientific_name=scientific_name,
-                    slug=slug,
-                    url_template=url_template
-                )
-            org.save()
+            obj, created = Organism.objects.update_or_create(
+                taxonomy_id=taxonomy_id,
+                defaults = {
+                    'common_name': common_name,
+                    'scientific_name': scientific_name,
+                    'slug': slug,
+                    'url_template': url_template
+                }
+            )
+
+            action = "created" if created else "updated"
             self.stdout.write(
-                self.style.NOTICE(f"Organism {action_str} successfully")
+                self.style.SUCCESS(f"Organism {action} successfully")
             )
         else:
             # Report an error when input arguments are incorrect.
             raise CommandError(
-                "Failed to add or update organism. " +
+                "Failed to update or create organism. " +
                 "Please check that input fields are correct."
             )
