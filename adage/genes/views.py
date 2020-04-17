@@ -92,15 +92,16 @@ class GeneViewSet(ModelViewSet):
             ).annotate(
                 std_similarity=TrigramSimilarity('standard_name', similarity_str),
                 sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
+                alias_similarity=TrigramSimilarity('aliases', similarity_str),
                 desc_similarity=TrigramSimilarity('description', similarity_str),
                 eid_similarity=TrigramSimilarity('eid_str', similarity_str),
             ).annotate(
                 similarity=(
-                    F('std_similarity') + F('sys_similarity') +
+                    F('std_similarity') + F('sys_similarity') + F('alias_similarity') +
                     F('desc_similarity') + F('eid_similarity')
                 ),
                 max_similarity=Greatest(
-                    'std_similarity', 'sys_similarity',
+                    'std_similarity', 'sys_similarity', 'alias_similarity',
                     'desc_similarity', 'eid_similarity'
                 )
             ).annotate(
@@ -110,6 +111,9 @@ class GeneViewSet(ModelViewSet):
                     ),
                     When(sys_similarity__gte=F('max_similarity'),
                          then=Value("systematic_name")
+                    ),
+                    When(alias_similarity__gte=F('max_similarity'),
+                         then=Value("aliases")
                     ),
                     When(desc_similarity__gte=F('max_similarity'),
                          then=Value("description")
