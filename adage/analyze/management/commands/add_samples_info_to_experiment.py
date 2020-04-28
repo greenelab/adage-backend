@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-"""This management command collects information of samples that are
+"""
+This management command collects information of samples that are
 associated with each experiment and combines them into a string, which is
 then set as the value of `samples_info` field in `Experiment` model. This
 field will be used for full text search in `Experiment` API. The samples
@@ -23,7 +24,7 @@ class Command(BaseCommand):
         try:
             set_samples_info()
             self.stdout.write(
-                self.style.NOTICE("samples_info set successfully")
+                self.style.SUCCESS("samples_info set successfully")
             )
         except Exception as e:
             raise CommandError("Failed to set samples_info: \n%s" % e)
