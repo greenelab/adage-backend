@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 options['participation_type']
             )
             self.stdout.write(
-                self.style.NOTICE("Signature-gene participation updated")
+                self.style.SUCCESS("Signature-gene participations updated")
             )
         except Exception as e:
             raise CommandError(
