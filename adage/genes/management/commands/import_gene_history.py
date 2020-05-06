@@ -190,9 +190,19 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
                 gene.obsolete = True
                 gene.save()
         except Gene.DoesNotExist:
+            # Special case: According to:
+            #   http://pseudomonas.com/feature/show?id=107270
+            # the systematic name of gene "pslO" should be "PA2245"
+            symbol = fields[symbol_col]
+            if symbol == 'pslO':
+                sys_name = "PA2245"
+            else:
+                sys_name=symbol
+
             Gene.objects.create(
                 entrezid=entrez_id,
                 organism=organism,
-                systematic_name=fields[symbol_col],
+                systematic_name=sys_name,
+                standard_name=symbol,
                 obsolete=True
             )
