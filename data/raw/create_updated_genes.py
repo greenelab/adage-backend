@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 """
-This script reads three gene information files and combine them into a
-single tab-delimited file, which will be used as the input file of the
-management command `update_gene_names_aliases.py` in the parent directory.
+This script reads three gene information files, merges them together,
+and prints them out. The output will be used as the input file of the
+management command `update_gene_names_aliases.py`.
 """
 
 import csv
@@ -14,8 +14,17 @@ gene_annotations = dict()
 def get_PA14_names():
     """
     Reads in a CSV file that maps PAO1 names (aka. systematic_name) to PA14
-    names. If a line's column #4 is "Pseudomonas aeruginosa UCBPP-PA14", then
-    column #2 is PAO1 name, and column #5 is its PA14 name.
+    names.  The CSV file includes 8 columns:
+        #1: "Strain(Query)"
+        #2: "Locus Tag(Query)"
+        #3: "Description(Query)"
+        #4: "Strain(Hit)"
+        #5: "Locus Tag(Hit)"
+        #6: "Description(Hit)"
+        #7: "Percent Identity"
+        #8: "Alignment Length"
+    #2 is a gene's PAO1 name, when #4 is 'Pseudomonas aeruginosa UCBPP-PA14',
+    the value in #5 is the gene's PA14 name.
 
     Returns a dict whose key is PAO1 name, and value is a list of PA14 names.
     """
@@ -24,9 +33,7 @@ def get_PA14_names():
     pao1_to_pa14 = dict()
     with open(PA14_src) as fh:
         reader = csv.reader(fh, delimiter=',', quotechar='"')
-        line_num = 0
-        for row in reader:
-            line_num += 1
+        for line_num, row in enumerate(reader, start=1):
             if line_num == 1 or row[3] != 'Pseudomonas aeruginosa UCBPP-PA14':
                 continue
 
@@ -57,9 +64,7 @@ def read_errata():
 
     errata_src = 'gene_name_alias_corrections.tsv'
     with open(errata_src) as fh:
-        line_num = 0
-        for line in fh:
-            line_num += 1
+        for line_num, line in enumerate(fh, start=1):
             if line_num == 1:
                 continue
             tokens = line.strip().split('\t')
@@ -79,21 +84,41 @@ def read_errata():
 
 def read_gene_annotation():
     """
-    Read in a CSV file of Pseudomonas gene annotations. Column #6 is PAO1 name
-    (aka. systematic_name), column #11 is gene name (aka. standard_name), and
-    column #12 is a list of synonyms (delimited by " ; ").
+    Read in a CSV file of Pseudomonas gene annotations. The file includes 21 columns:
+        #1:  DB Version
+        #2:  Assembly Accession
+        #3:  Chromosome/Plasmid Name
+        #4:  Chromosome/Plasmid Xref
+        #5:  PGD Gene ID
+        #6:  Locus Tag
+        #7:  Feature Type
+        #8:  Start
+        #9:  End
+        #10: Strand
+        #11: Gene Name
+        #12: Gene synonyns
+        #13: Product Name
+        #14: Product Name Confidence Class
+        #15: Product Synonyms
+        #16: RefSeq Accession
+        #17: Length (nucleotides)
+        #18: Length (amino acids)
+        #19: Molecular Weight (predicted)
+        #20: Isoelectric Point (predicted)
+        #21: Subcellular Localization [Confidence Class]
+    #6 is PAO1 name (aka. systematic_name), #11 is gene name (aka. standard_name),
+    column #12 is a list of synonyms delimited by " ; ".
 
     Returns a dict whose key is PAO1 name, value is a two-element tuple, the
     first element is gene_name, the second element is list of synonyms.
 
-    This function should be called before read_errata().
+    NOTE: This function should be called before read_errata().
     """
+
     gene_annotation_src = 'Pseudomonas_aeruginosa_PAO1_107.csv'
     with open(gene_annotation_src) as fh:
         reader = csv.reader(fh, delimiter=',', quotechar='"')
-        line_num = 0
-        for row in reader:
-            line_num += 1
+        for line_num, row in enumerate(reader, start=1):
             if line_num == 1 or row[0].startswith('#'):
                 continue
 
@@ -106,19 +131,18 @@ def read_gene_annotation():
             synonyms = row[11].split(' ; ')
             gene_annotations[pao1_name] = (gene_name, synonyms)
 
+if __name__ == '__main__':
+    pao1_to_pa14 = get_PA14_names()
+    read_errata()
+    read_gene_annotation()
 
-# main
-pao1_to_pa14 = get_PA14_names()
-read_errata()
-read_gene_annotation()
-
-# Merge pao1_to_pa14 and gene_annotations
-print("#systematic_name", "standard_name", "synonyms", sep='\t')
-for pao1_name, annotation in gene_annotations.items():
-    gene_name = annotation[0]
-    synonyms = annotation[1]
-    if pao1_name in pao1_to_pa14:
-        synonyms += pao1_to_pa14[pao1_name]
-        synonyms.sort()
-    synonyms = ' '.join(synonyms).strip()
-    print(pao1_name, gene_name, synonyms, sep='\t')
+    # Merge pao1_to_pa14 and gene_annotations
+    print("#systematic_name", "standard_name", "synonyms", sep='\t')
+    for pao1_name, annotation in gene_annotations.items():
+        gene_name = annotation[0]
+        synonyms = annotation[1]
+        if pao1_name in pao1_to_pa14:
+            synonyms += pao1_to_pa14[pao1_name]
+            synonyms.sort()
+        synonyms = ' '.join(synonyms).strip()
+        print(pao1_name, gene_name, synonyms, sep='\t')
