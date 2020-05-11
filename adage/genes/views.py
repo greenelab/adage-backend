@@ -53,7 +53,7 @@ class GeneViewSet(ModelViewSet):
             'systematic_name', weight='B', config='english'
         )
         other_vector = SearchVector(
-            'description', 'crossref__xrid', weight='C', config='english'
+            'aliases', weight='C', config='english'
         )
 
         vectors = standard_vector + systematic_vector + other_vector
