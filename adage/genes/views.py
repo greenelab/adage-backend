@@ -1,5 +1,5 @@
 import json
-from django.db.models import Case, CharField, F, Q, Value, When
+from django.db.models import Case, CharField, FloatField, F, Q, Value, When
 from django.db.models.functions import Cast, Greatest
 from django.contrib.postgres.search import (
     SearchQuery, SearchRank, SearchVector, TrigramSimilarity
@@ -92,16 +92,20 @@ class GeneViewSet(ModelViewSet):
             ).annotate(
                 std_similarity=TrigramSimilarity('standard_name', similarity_str),
                 sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
-                alias_similarity=TrigramSimilarity('aliases', similarity_str),
                 desc_similarity=TrigramSimilarity('description', similarity_str),
                 eid_similarity=TrigramSimilarity('eid_str', similarity_str),
+                aliases_similarity=Case(
+                    When(aliases__icontains=similarity_str, then=Value(1.0)),
+                    default=Value(0),
+                    output_field=FloatField(),
+                )
             ).annotate(
                 similarity=(
-                    F('std_similarity') + F('sys_similarity') + F('alias_similarity') +
+                    F('std_similarity') + F('sys_similarity') + F('aliases_similarity') +
                     F('desc_similarity') + F('eid_similarity')
                 ),
                 max_similarity=Greatest(
-                    'std_similarity', 'sys_similarity', 'alias_similarity',
+                    'std_similarity', 'sys_similarity', 'aliases_similarity',
                     'desc_similarity', 'eid_similarity'
                 )
             ).annotate(
@@ -112,7 +116,7 @@ class GeneViewSet(ModelViewSet):
                     When(sys_similarity__gte=F('max_similarity'),
                          then=Value("systematic_name")
                     ),
-                    When(alias_similarity__gte=F('max_similarity'),
+                    When(aliases_similarity__gte=F('max_similarity'),
                          then=Value("aliases")
                     ),
                     When(desc_similarity__gte=F('max_similarity'),
@@ -123,7 +127,7 @@ class GeneViewSet(ModelViewSet):
                     ),
                     output_field=CharField(),
                 )
-            ).filter(similarity__gte=0.1
+            ).filter(similarity__gte=0.3
             ).order_by('-max_similarity', '-similarity', 'standard_name')
 
         return queryset
