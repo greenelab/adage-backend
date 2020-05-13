@@ -1,0 +1,26 @@
+# Simple eADAGE machine learning model
+
+# Required fields
+organism_tax_id: 208964
+title: "Ensemble ADAGE 300 with more complex gene-gene network"
+
+# Optional field that specifies whether edges in the gene-gene network is
+# directed or not. Default value is False.
+directed_g2g_edge: False
+
+# Optional field that specified the minimum weight of edges that will be
+# included in gene-gene network. Default value is 0.
+g2g_edge_cutoff: 0.2
+
+# Other optional fields that default to empty string.
+description: "eADAGE model with undirected gene-gene edge (cutoff 0.2)"
+authors: "Jie Tan\nGeorgia Doing\nKimberley A. Lewis\nCourtney E. Price\nKathleen M. Chen\nKyle C. Cady\nBarret Perchuk\nMichael T. Laub\nDeborah A. Hogan\nCasey S. Greene"
+affiliations: "Dartmouth College\nUniversity of Pennsylvania"
+funders: "GBMF 4552 from Gordon and Betty Moore Foundation((PI, Casey Greene)\nCystic Fibrosis Foundation STANTO15R0 ((Greene and Hogan, PIs)"
+references: "Tan et al., 2017. BMC Bioinformatics (https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1905-4)"
+license: Null
+
+# Citation-related fields (optional, default to empty string)
+journal: "Cell Systems"
+year: 2017
+url: "https://www.cell.com/cell-systems/fulltext/S2405-4712(17)30231-4"
