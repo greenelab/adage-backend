@@ -72,6 +72,7 @@ class Command(BaseCommand):
             )
 
             action = "created" if created else "updated"
+
             self.stdout.write(
                 self.style.SUCCESS(f"Organism {action} successfully")
             )

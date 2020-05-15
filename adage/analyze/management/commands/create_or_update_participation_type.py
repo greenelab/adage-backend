@@ -32,10 +32,8 @@ class Command(BaseCommand):
             obj, created = ParticipationType.objects.update_or_create(
                 name=name, defaults={'description': description}
             )
-            if created:
-                action = "created"
-            else:
-                action = "updated"
+
+            action = "created" if created else "updated"
 
             self.stdout.write(
                 self.style.SUCCESS(f"Participation type '{name}' {action} successfully")

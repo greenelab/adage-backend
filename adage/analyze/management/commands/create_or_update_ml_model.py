@@ -57,10 +57,8 @@ class Command(BaseCommand):
             title=title,
             defaults=model_config
         )
-        if created:
-            action = 'created'
-        else:
-            action = 'updated'
+
+        action = "created" if created else "updated"
 
         self.stdout.write(
             self.style.SUCCESS(f"Machine learning model {action} successfully")
