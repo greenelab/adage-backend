@@ -1,12 +1,12 @@
 """
 Create or update the machine learning model that is specified by an
 input YAML file.  This management command should be invoked like this:
-
   python manage.py create_or_update_mlmodel <ml_model_config.yml>
-
 in which `<ml_model_config.yml>` is the input YAML file.
-See `simple_ml_model.yml` and `complex_ml_model.yml` in `<repo>/data/` for
-details of the yml file's format.
+
+For details of input YAML file's format, see the two examples in this repo:
+  * data/simple_ml_model.yml
+  * data/complex_ml_model.yml
 """
 
 import yaml
@@ -57,10 +57,8 @@ class Command(BaseCommand):
             title=title,
             defaults=model_config
         )
-        if created:
-            action = 'created'
-        else:
-            action = 'updated'
+
+        action = "created" if created else "updated"
 
         self.stdout.write(
             self.style.SUCCESS(f"Machine learning model {action} successfully")

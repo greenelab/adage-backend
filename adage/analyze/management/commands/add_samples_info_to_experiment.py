@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This management command collects information of samples that are
 associated with each experiment and combines them into a string, which is
