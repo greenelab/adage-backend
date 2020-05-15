@@ -16,7 +16,7 @@ from organisms.models import Organism
 
 
 class Command(BaseCommand):
-    help = "Adds a new organism into the database."
+    help = "Create or update an organism in database."
 
     def add_arguments(self, parser):
         parser.add_argument('--tax_id', dest='tax_id', type=int, required=True)

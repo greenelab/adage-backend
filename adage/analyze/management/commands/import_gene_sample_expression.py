@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This management command reads an input file of gene-sample expression values
 and loads the valid data into the database.  It should be invoked like this:

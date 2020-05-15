@@ -84,19 +84,19 @@ def import_signatures(signatures, mlmodel):
     """
 
     signature_set = set()
-    for index, name in enumerate(signatures):
+    for col_num, name in enumerate(signatures, start=2):
         if not name or name.isspace():
             raise Exception(
-                "Input file line #1 column #%d: blank signature name" % (index + 2)
+                "Input file line #1 column #%d: blank signature name" % col_num
             )
         elif name in signature_set:
             raise Exception(
-                "Input file line #1 column #%d: %s is NOT unique" % (index + 2, name)
+                "Input file line #1 column #%d: %s is NOT unique" % (col_num, name)
             )
         elif Signature.objects.filter(name=name, mlmodel=mlmodel).exists():
             raise Exception(
                 "Input file line #1 column #%d: Signature name (%s) already "
-                "exists in database" % (index + 2, name)
+                "exists in database" % (col_num, name)
             )
         else:
             signature_set.add(name)
