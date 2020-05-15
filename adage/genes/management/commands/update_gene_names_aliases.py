@@ -20,7 +20,7 @@ from genes.models import Gene
 PSEUDOMONAS_ID = 208964
 
 class Command(BaseCommand):
-    help = ('Read input tsv file that includes updated gene names and aliases')
+    help = 'Read input tsv file that includes updated gene names and aliases'
 
     def add_arguments(self, parser):
         parser.add_argument('gene_file', type=open)
