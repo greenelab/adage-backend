@@ -10,7 +10,7 @@
 
    The command accepts 2 required arguments and 3 optional arguments:
 
-   * (Required) gene_history_file: Input gene history file. A gzipped
+   * (Required) filename: Input gene history file's name. A gzipped
      example file can be found at:
      ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz
 
@@ -108,7 +108,7 @@ class Command(BaseCommand):
         try:
             with transaction.atomic():
                 import_gene_history(
-                    options['gene_history_file'],
+                    options['filename'],
                     options['tax_id'],
                     options['tax_id_col'] - 1,
                     options['id_col'] - 1,
@@ -152,10 +152,6 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
     converted into 0-based column indexes.
     """
 
-    # Make sure that tax_id is not "" or "  "
-    if not tax_id or tax_id.isspace():
-        raise Exception("Input tax_id is blank")
-
     # Make sure that tax_id exists in Organism table in the database.
     try:
         organism = Organism.objects.get(taxonomy_id=tax_id)
@@ -179,7 +175,7 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
         chk_col_numbers(line_num, len(fields), tax_id_col, id_col, symbol_col)
 
         # Skip lines whose tax_id's do not match input tax_id.
-        if tax_id != fields[tax_id_col]:
+        if tax_id != int(fields[tax_id_col]):
             continue
 
         entrez_id = fields[id_col]
