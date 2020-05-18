@@ -8,8 +8,9 @@ import logging
 import os
 import sys
 from operator import itemgetter
-from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from analyze.models import Experiment, Sample, SampleAnnotation, AnnotationType
 
 # Import ADAGE utilities.
@@ -38,7 +39,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         try:
-            import_data(options['annotation_file'])
+            with transaction.atomic():
+                import_data(options['annotation_file'])
             self.stdout.write(self.style.SUCCESS("Data import succeeded"))
         except Exception as e:
             raise CommandError(

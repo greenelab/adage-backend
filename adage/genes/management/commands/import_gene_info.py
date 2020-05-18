@@ -1,12 +1,12 @@
 # The docstring in this module is written in rst format so that it can be
-# collected by sphinx and integrated into django-genes/README.rst file.
+# collected by Sphinx and integrated into django-genes/README.rst file.
 
 """
    This command parses gene info file(s) and saves the corresponding
    gene objects into the database. It takes 2 required arguments and 5
    optional arguments:
 
-   * (Required) gene_info_file: location of gene info file;
+   * (Required) filename: gene_info file's name;
 
    * (Required) tax_id: taxonomy ID for organism for which genes are
      being populated;
@@ -45,13 +45,14 @@ ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz
 
       # Call import_gene_info to populate the Gene table in database:
       python manage.py import_gene_info \
---gene_info_file=data/Homo_sapiens.gene_info \
+--filename=data/Homo_sapiens.gene_info \
 --tax_id=9606 --systematic_col=3 --symbol_col=2
 """
 
 import logging
 import sys
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from genes.models import Gene, CrossRefDB, CrossRef
 from organisms.models import Organism
 
@@ -61,8 +62,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--gene_info_file',
-            dest='gene_info_fh',
+            '--filename',
+            dest='filename',
             required=True,
             type=open,
             help="gene_info file (downloaded from NCBI entrez)"
@@ -118,12 +119,23 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        try:
+            with transaction.atomic():
+                self.import_data(options)
+            self.stdout.write(
+                self.style.SUCCESS("Gene info data imported successfully")
+            )
+        except Exception as e:
+            raise CommandError("Failed to import gene_info data: %s" % e)
+
+    @staticmethod
+    def import_data(options):
         # Load the organism.
         tax_id = options.get('tax_id')
         org = Organism.objects.get(taxonomy_id=tax_id)
 
         # gene_info file information.
-        gene_info_fh = options.get('gene_info_fh')
+        gene_info_fh = options.get('filename')
         symb_col = options.get('symbol_col')
         syst_col = options.get('systematic_col')
         alias_col = options.get('alias_col')
@@ -197,7 +209,8 @@ class Command(BaseCommand):
                     if not systematic_name.startswith('MT'):
                         logging.debug(
                             "Renaming %s to %s, mitochondrial version",
-                            systematic_name, "MT-" + systematic_name)
+                            systematic_name, "MT-" + systematic_name
+                        )
                         systematic_name = "MT-" + systematic_name
 
                 alias_str = ''
@@ -330,16 +343,9 @@ class Command(BaseCommand):
                 entrez_created
             )
             if org_matches < 10:
-                logging.error(
+                raise Exception(
                     'Less than 10 gene records found for this organism. '
                     'Please check the input organism ID.'
                 )
-                sys.exit(1)
         else:
-            logging.error(
-                "Couldn't load gene_info %s for org %s.",
-                options.get('gene_info'),
-                tax_id,
-                exc_info=sys.exc_info(),
-                extra={'options': options}
-            )
+            raise Exception("Invalid organism tax_id (%s)" % tax_id)
