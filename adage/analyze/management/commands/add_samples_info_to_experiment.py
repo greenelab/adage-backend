@@ -23,7 +23,7 @@ class Command(BaseCommand):
         try:
             set_samples_info()
             self.stdout.write(
-                self.style.SUCCESS("samples_info set successfully")
+                self.style.SUCCESS("samples_info updated successfully")
             )
         except Exception as e:
             raise CommandError("Failed to set samples_info: \n%s" % e)
