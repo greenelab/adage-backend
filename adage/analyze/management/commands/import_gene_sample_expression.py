@@ -113,7 +113,7 @@ def read_header(dat_src_tokens, samples):
                 samples.append(None)
                 logging.warning(
                     "Input file line #1: data_source in column #%d not found "
-                    "in the database: %s" % (col_num, data_source)
+                    "in database: %s" % (col_num, data_source)
                 )
 
 

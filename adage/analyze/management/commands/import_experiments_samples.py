@@ -41,7 +41,9 @@ class Command(BaseCommand):
         try:
             with transaction.atomic():
                 import_data(options['annotation_file'])
-            self.stdout.write(self.style.SUCCESS("Data import succeeded"))
+            self.stdout.write(
+                self.style.SUCCESS("Experiments and samples imported successfully")
+            )
         except Exception as e:
             raise CommandError(
                 "Experiment/sample/annotation import error: import_data "
