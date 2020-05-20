@@ -1,8 +1,10 @@
 #!/bin/bash
-
 # set -e: exit at error
 # set -x: print out every command executed
 set -e
+
+# This script took ~33 minutes to populate a local Postgres database on
+# Linux desktop in Greene Lab.
 
 # Get absolute paths based on current script's path
 SCRIPT_DIR=$(dirname $0)
@@ -130,6 +132,6 @@ echo $DIVIDER; date; echo "Importing gene-sample expression data ..."
 #   * line #1: data_source in column #978 not found in database: JS-T24.9.07.CEL
 ./manage.py import_gene_sample_expression \
 	    --filename="${DATA_DIR}/gene_sample_expression.tsv" \
-	    --tax_id=${TAX_ID}.
+	    --tax_id=${TAX_ID}
 
 echo $DIVIDER; echo "Database populated successfully!"; date
