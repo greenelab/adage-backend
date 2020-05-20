@@ -35,8 +35,8 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
    because the gene `PA4527` is already available on line `4627`.
 
    The download URL is copied from
-   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the link on this screenshot):
+   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download).
+   See the red link on the following screenshot:
    <div align="center">
        <img src="screenshot_gene_annotations.png"</img>
    </div>
@@ -49,8 +49,8 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
    http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_PAO1_107/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz
 
    The download URL is copied from
-   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the link on this screenshot):
+   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download).
+   See the red link on the following screenshot:
    <div align="center">
        <img src="screenshot_ortholog_predictions.png"</img>
    </div>
