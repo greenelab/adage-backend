@@ -345,7 +345,7 @@ class Command(BaseCommand):
             if org_matches < 10:
                 raise Exception(
                     'Less than 10 gene records found for this organism. '
-                    'Please check the input organism ID.'
+                    'Please check the input organism tax_id.'
                 )
         else:
             raise Exception("Invalid organism tax_id (%s)" % tax_id)
