@@ -1,5 +1,5 @@
 # The docstring in this module is written in rst format so that it can be
-# collected by sphinx and integrated into django-genes/README.rst file.
+# collected by Sphinx and integrated into django-genes/README.rst file.
 
 """
    This management command reads an input tab-delimited file whose column #1 is
@@ -9,26 +9,29 @@
 
    The command requires a positional argument: the input filename. It should be
    invoked like this:
-      python manage.py update_gene_names_aliases <path>/updated_genes.tsv
+      python manage.py import_updated_genes <path>/updated_genes.tsv
 """
 
 
 from django.core.management.base import BaseCommand, CommandError
-from organisms.models import Organism
+from django.db import transaction
 from genes.models import Gene
+from organisms.models import Organism
 
 PSEUDOMONAS_ID = 208964
+
 
 class Command(BaseCommand):
     help = 'Read input tsv file that includes updated gene names and aliases'
 
     def add_arguments(self, parser):
-        parser.add_argument('gene_file', type=open)
+        parser.add_argument('filename', type=open)
 
     def handle(self, *args, **options):
         try:
-            fh = options['gene_file']
-            self.update_genes(fh)
+            fh = options['filename']
+            with transaction.atomic():
+                self.update_genes(fh)
             self.stdout.write(
                 self.style.SUCCESS('Genes updated successfully')
             )
@@ -37,9 +40,7 @@ class Command(BaseCommand):
 
     def update_genes(self, file_handle):
         organism = Organism.objects.get(taxonomy_id=PSEUDOMONAS_ID)
-        line_num = 0
-        for line in file_handle:
-            line_num += 1
+        for line_num, line in enumerate(file_handle, start=1):
             line = line.strip('\n')
             # Skip blank lines or the ones that start with '#'
             if line.startswith('#') or len(line) == 0:
@@ -66,7 +67,8 @@ class Command(BaseCommand):
             except Gene.MultipleObjectsReturned:
                 self.stdout.write(
                     self.style.NOTICE(
-                        f"Line #{line_num} ignored: {pao1_name} matches multiple genes in database"
+                        f"Line #{line_num} ignored: " +
+                        f"{pao1_name} matches multiple genes in database"
                     )
                 )
             else:

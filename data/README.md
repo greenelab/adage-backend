@@ -35,24 +35,24 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
    because the gene `PA4527` is already available on line `4627`.
 
    The download URL is copied from
-   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the left link on this screenshot):
+   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download).
+   See the red link on the following screenshot:
    <div align="center">
-       <img src="screenshot_pseudomonas.png"</img>
+       <img src="screenshot_gene_annotations.png"</img>
    </div>
 
    This file is used to map a gene's PAO1 name to its standard name and aliases (if any).
 
-5. **raw/Pseudomonas_aeruginosa_PAO1_107.csv**: Pseudomonas ortholog predictions file
+5. **raw/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv**: Pseudomonas ortholog predictions file
 
    This file is decompressed from:
    http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_PAO1_107/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz
 
    The download URL is copied from
-   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the right link on this screenshot):
+   [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download).
+   See the red link on the following screenshot:
    <div align="center">
-       <img src="screenshot_pseudomonas.png"</img>
+       <img src="screenshot_ortholog_predictions.png"</img>
    </div>
 
    This file is used to map a gene's PAO1 name to its PA14 name.

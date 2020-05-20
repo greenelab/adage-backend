@@ -72,9 +72,12 @@ class Command(BaseCommand):
             )
 
             action = "created" if created else "updated"
-
             self.stdout.write(
                 self.style.SUCCESS(f"Organism {action} successfully")
             )
+
         else:
-            raise CommandError("Failed to update or create organism")
+            raise CommandError(
+                "Failed to create or update organism: " +
+                "blank common_name or scientific_name"
+            )

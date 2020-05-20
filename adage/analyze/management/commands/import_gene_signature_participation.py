@@ -111,7 +111,7 @@ def get_weight_matrix(file_handle):
         if line_num == 1:
             num_columns = len(tokens)
             nodes = tokens[1:]
-            for idx, node_name in enumerate(nodes):
+            for node_name in nodes:
                 weight_matrix[node_name] = dict()
         else:  # read data lines
             # Validate the number of columns in each line

@@ -1,5 +1,5 @@
 # The docstring in this module is written in rst format so that it can be
-# collected by sphinx and integrated into django-genes/README.rst file.
+# collected by Sphinx and integrated into django-genes/README.rst file.
 
 """
    This management command will read an input gene history file and
@@ -10,7 +10,7 @@
 
    The command accepts 2 required arguments and 3 optional arguments:
 
-   * (Required) gene_history_file: Input gene history file. A gzipped
+   * (Required) filename: Input gene history file's name. A gzipped
      example file can be found at:
      ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz
 
@@ -43,7 +43,7 @@
 
       # Run management command:
       python manage.py import_gene_history \
---gene_histry_file=/data_dir/gene_history --tax_id=208964 \
+--filename=/data_dir/gene_history --tax_id=208964 \
 --tax_id_col=1 --discontinued_id_col=3 --discontinued_symbol_col=4
 
    (Here ``--tax_id_col=1 --discontinued_id_col=3
@@ -53,8 +53,9 @@
 
 
 from django.core.management.base import BaseCommand, CommandError
-from organisms.models import Organism
+from django.db import transaction
 from genes.models import Gene
+from organisms.models import Organism
 
 
 class Command(BaseCommand):
@@ -66,51 +67,53 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # Two required arguments
         parser.add_argument(
-            '--gene_history_file',
-            dest='gene_history_file',
+            '--filename',
+            dest='filename',
+            type=open,
             required=True,
-            type=open
         )
         parser.add_argument(
             '--tax_id',
             dest='tax_id',
+            type=int,
             required=True,
         )
 
         # Three optional arguments
         parser.add_argument(
             '--tax_id_col',
+            dest='tax_id_col',
             type=int,
             default=1,
-            dest='tax_id_col',
             help='column number of tax_id'
         )
 
         parser.add_argument(
             '--discontinued_id_col',
+            dest='id_col',
             type=int,
             default=3,
-            dest='id_col',
             help='column number of Discontinued_GeneID'
         )
 
         parser.add_argument(
             '--discontinued_symbol_col',
+            dest='symbol_col',
             type=int,
             default=4,
-            dest='symbol_col',
             help='column number of Discontinued_Symbol'
         )
 
     def handle(self, *args, **options):
         try:
-            import_gene_history(
-                options['gene_history_file'],
-                options['tax_id'],
-                options['tax_id_col'] - 1,
-                options['id_col'] - 1,
-                options['symbol_col'] - 1
-            )
+            with transaction.atomic():
+                import_gene_history(
+                    options['filename'],
+                    options['tax_id'],
+                    options['tax_id_col'] - 1,
+                    options['id_col'] - 1,
+                    options['symbol_col'] - 1
+                )
             self.stdout.write(
                 self.style.SUCCESS('Gene history imported successfully')
             )
@@ -149,10 +152,6 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
     converted into 0-based column indexes.
     """
 
-    # Make sure that tax_id is not "" or "  "
-    if not tax_id or tax_id.isspace():
-        raise Exception("Input tax_id is blank")
-
     # Make sure that tax_id exists in Organism table in the database.
     try:
         organism = Organism.objects.get(taxonomy_id=tax_id)
@@ -167,18 +166,16 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
             'tax_id_col, id_col and symbol_col must be positive integers'
         )
 
-    for line_index, line in enumerate(file_handle):
+    for line_num, line in enumerate(file_handle, start=1):
         if line.startswith('#'):  # Skip comment lines.
             continue
 
         fields = line.rstrip().split('\t')
         # Check input column numbers.
-        chk_col_numbers(
-            line_index + 1, len(fields), tax_id_col, id_col, symbol_col
-        )
+        chk_col_numbers(line_num, len(fields), tax_id_col, id_col, symbol_col)
 
         # Skip lines whose tax_id's do not match input tax_id.
-        if tax_id != fields[tax_id_col]:
+        if tax_id != int(fields[tax_id_col]):
             continue
 
         entrez_id = fields[id_col]

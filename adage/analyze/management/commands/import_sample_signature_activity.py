@@ -133,8 +133,8 @@ def import_activity_line(line_num, signatures, tokens, mlmodel):
         # instead of raising an exception, generate a warning message
         # and skip this activity data line.
         logging.warn(
-            "Input file line #%d: data_source in column #1 is not found in "
-            "the database: %s", line_num, data_source
+            "Input file line #%d: data_source in column #1 not found in "
+            "database: %s", line_num, data_source
         )
         return
 

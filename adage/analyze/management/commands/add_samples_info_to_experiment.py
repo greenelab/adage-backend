@@ -12,6 +12,7 @@ Note: This command should be run ONLY AFTER `Experiment`, `Sample` and
 """
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from analyze.models import Experiment, Sample, SampleAnnotation
 
 
@@ -22,15 +23,16 @@ class Command(BaseCommand):
         try:
             set_samples_info()
             self.stdout.write(
-                self.style.SUCCESS("samples_info set successfully")
+                self.style.SUCCESS("samples_info updated successfully")
             )
         except Exception as e:
             raise CommandError("Failed to set samples_info: \n%s" % e)
 
 
 def get_all_samples_info():
-    """This function returns a dictionary whose key is a sample's ID,
-    and the corresponding value is a string of this sample's info.
+    """
+    Returns a dictionary whose key is a sample's ID, and the corresponding
+    value is a string of this sample's info.
     """
 
     all_samples_info = dict()
@@ -53,11 +55,12 @@ def set_samples_info():
 
     all_samples_info = get_all_samples_info()
     experiment_qs = Experiment.objects.all()
-    for experiment in experiment_qs:
-        samples = experiment_qs.filter(pk=experiment).values('sample')
-        samples_info = ""
-        for s in samples:
-            sample_id = s['sample']
-            samples_info += all_samples_info[sample_id] + "\n"
-        experiment.samples_info = samples_info
-        experiment.save()
+    with transaction.atomic():
+        for experiment in experiment_qs:
+            samples = experiment_qs.filter(pk=experiment).values('sample')
+            samples_info = ""
+            for s in samples:
+                sample_id = s['sample']
+                samples_info += all_samples_info[sample_id] + "\n"
+            experiment.samples_info = samples_info
+            experiment.save()
