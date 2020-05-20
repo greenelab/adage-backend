@@ -36,9 +36,9 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
 
    The download URL is copied from
    [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the left link on this screenshot):
+   (the link on this screenshot):
    <div align="center">
-       <img src="screenshot_pseudomonas.png"</img>
+       <img src="screenshot_gene_annotations.png"</img>
    </div>
 
    This file is used to map a gene's PAO1 name to its standard name and aliases (if any).
@@ -50,9 +50,9 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
 
    The download URL is copied from
    [Pseudomonas Downlaod Page](http://pseudomonas.com/strain/download)
-   (the right link on this screenshot):
+   (the link on this screenshot):
    <div align="center">
-       <img src="screenshot_pseudomonas.png"</img>
+       <img src="screenshot_ortholog_predictions.png"</img>
    </div>
 
    This file is used to map a gene's PAO1 name to its PA14 name.
