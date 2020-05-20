@@ -43,7 +43,7 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
 
    This file is used to map a gene's PAO1 name to its standard name and aliases (if any).
 
-5. **raw/Pseudomonas_aeruginosa_PAO1_107.csv**: Pseudomonas ortholog predictions file
+5. **raw/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv**: Pseudomonas ortholog predictions file
 
    This file is decompressed from:
    http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_PAO1_107/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv.gz
