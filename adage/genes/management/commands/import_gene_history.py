@@ -182,7 +182,7 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
         # If the gene already exists in database, set its "obsolete" attribute
         # to True; otherwise create a new obsolete gene in database.
         try:
-            gene = Gene.objects.get(entrezid=entrez_id)
+            gene = Gene.objects.get(entrez_id=entrez_id)
             if not gene.obsolete:
                 gene.obsolete = True
                 gene.save()
@@ -197,7 +197,7 @@ def import_gene_history(file_handle, tax_id, tax_id_col, id_col, symbol_col):
                 sys_name=symbol
 
             Gene.objects.create(
-                entrezid=entrez_id,
+                entrez_id=entrez_id,
                 organism=organism,
                 systematic_name=sys_name,
                 standard_name=symbol,

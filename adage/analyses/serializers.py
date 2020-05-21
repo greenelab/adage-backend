@@ -16,14 +16,17 @@ class ExperimentSerializer(serializers.ModelSerializer):
     extra `samples` field with sample IDs and sample names.
     """
 
-    class Meta:
-        model = Experiment
-        fields = ('accession', 'name', 'description', 'samples', 'max_similarity_field')
-
     samples = serializers.SerializerMethodField()
 
     # This field is only populated when `autocomplete` parameter is in the URL
     max_similarity_field = serializers.CharField(required=False)
+
+    class Meta:
+        model = Experiment
+        fields = (
+            'id', 'accession', 'name', 'description',
+            'samples', 'max_similarity_field'
+        )
 
     def get_samples(self, record):
         """

@@ -101,7 +101,7 @@ class GeneSearchAPITests(APITestCase):
         num_genes = 1100
         for i in range(num_genes):
             Gene.objects.create(
-                entrezid=(i + 100),
+                entrez_id=(i + 100),
                 systematic_name="sys_name #" + str(i + 100),
                 standard_name="std_name #" + str(i + 100),
                 organism=org456
