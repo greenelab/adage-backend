@@ -54,13 +54,12 @@ def set_samples_info():
     """Update `samples_info` field in each experiment."""
 
     all_samples_info = get_all_samples_info()
-    experiment_qs = Experiment.objects.all()
+    experiments = Experiment.objects.all()
     with transaction.atomic():
-        for experiment in experiment_qs:
-            samples = experiment_qs.filter(pk=experiment).values('sample')
-            samples_info = ""
+        for exp_obj in experiments:
+            samples = exp_obj.sample_set.all()
+            samples_info = ''
             for s in samples:
-                sample_id = s['sample']
-                samples_info += all_samples_info[sample_id] + "\n"
-            experiment.samples_info = samples_info
-            experiment.save()
+                samples_info += all_samples_info[s.id] + '\n'
+            exp_obj.samples_info = samples_info
+            exp_obj.save()
