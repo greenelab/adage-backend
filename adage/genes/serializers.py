@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Gene
-from django.db.models.fields import IntegerField
+
 
 class GeneSerializer(serializers.ModelSerializer):
     # Optional external URL for each gene, based on "url_template" field
@@ -18,9 +18,9 @@ class GeneSerializer(serializers.ModelSerializer):
     )
 
     # FIXME: "entrezid" is an alias of "entrez_id". It is created to prevent
-    # front-end from breaking. It should be deleted after the front-end starts
-    # using "entrez_id".
-    entrezid = IntegerField(read_only=True, source="entrez_id")
+    # front-end from breaking.
+    # It should be deleted once the front-end uses "entrez_id".
+    entrezid = serializers.IntegerField(read_only=True, source="entrez_id")
 
     class Meta:
         model = Gene
