@@ -22,8 +22,6 @@ jobs:
             sudo apt-get upgrade --yes --quiet
             sudo apt-get install postgresql-client --yes
             createdb --host=localhost --username=circleci circleci_db
-            psql --host=localhost --username=circleci circleci_db \
-            -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
             cp .circleci/ci_django.yml adage/adage/config.yml
       - run:
           name: Set up venv
@@ -39,6 +37,8 @@ jobs:
             pip install -r requirements.txt
             python3 manage.py makemigrations
             python3 manage.py migrate
+            psql --host=localhost --username=circleci circleci_db \
+            -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
             python3 manage.py test
 
 workflows:
