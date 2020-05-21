@@ -12,10 +12,7 @@ class GeneSerializer(serializers.ModelSerializer):
     )
 
     # This field is only populated when `autocomplete` parameter is in the URL
-    max_similarity_field = serializers.CharField(
-        required=False,
-        read_only=True
-    )
+    max_similarity_field = serializers.CharField(required=False, read_only=True)
 
     # FIXME: "entrezid" is an alias of "entrez_id". It is created to prevent
     # front-end from breaking.

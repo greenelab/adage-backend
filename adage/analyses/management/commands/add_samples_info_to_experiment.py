@@ -13,7 +13,7 @@ Note: This command should be run ONLY AFTER `Experiment`, `Sample` and
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from .models import Experiment, Sample, SampleAnnotation
+from analyses.models import Experiment, Sample, SampleAnnotation
 
 
 class Command(BaseCommand):

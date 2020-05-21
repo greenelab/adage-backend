@@ -10,7 +10,7 @@ It can be invoked like this:
 """
 
 from django.core.management.base import BaseCommand, CommandError
-from analyze.models import ParticipationType
+from analyses.models import ParticipationType
 
 
 class Command(BaseCommand):

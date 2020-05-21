@@ -18,7 +18,7 @@ the management command "create_or_update_ml_model.py" to add it to database.
 import logging
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from .models import Sample, MLModel, Signature, Activity
+from analyses.models import Sample, MLModel, Signature, Activity
 
 
 class Command(BaseCommand):

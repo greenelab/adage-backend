@@ -11,7 +11,7 @@ from operator import itemgetter
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from .models import Experiment, Sample, SampleAnnotation, AnnotationType
+from analyses.models import Experiment, Sample, SampleAnnotation, AnnotationType
 
 # Import ADAGE utilities.
 # FIXME: `get_pseudo_sdrf.py` and `gen_spreadsheets.py` modules are copied from
