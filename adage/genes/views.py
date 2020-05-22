@@ -92,13 +92,9 @@ class GeneViewSet(ModelViewSet):
             ).annotate(
                 std_similarity=TrigramSimilarity('standard_name', similarity_str),
                 sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
+                aliases_similarity=TrigramSimilarity('aliases', similarity_str),
                 desc_similarity=TrigramSimilarity('description', similarity_str),
                 eid_similarity=TrigramSimilarity('eid_str', similarity_str),
-                aliases_similarity=Case(
-                    When(aliases__icontains=similarity_str, then=Value(1.0)),
-                    default=Value(0),
-                    output_field=FloatField(),
-                )
             ).annotate(
                 similarity=(
                     F('std_similarity') + F('sys_similarity') + F('aliases_similarity') +
