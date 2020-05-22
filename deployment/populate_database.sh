@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -e: exit at error
+# set -e: exit at any error
 # set -x: print out every command executed
 set -e
 
@@ -25,6 +25,7 @@ cd ${PROJECT_DIR}
 
 date; echo "Creating new organism ..."
 ./manage.py create_or_update_organism \
+	    --create_only \
 	    --tax_id=${TAX_ID} \
 	    --scientific_name="Pseudomonas aeruginosa" \
 	    --common_name="Pseudomonas aeruginosa" \
