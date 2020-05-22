@@ -34,14 +34,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         """
 
         samples_set = record.sample_set.all().order_by('id')
-        samples = list()
-        for s in samples_set:
-            current_sample = {
-                'id': s.id,
-                'name':  s.name
-            }
-            samples.append(current_sample)
-
+        samples = [s.id for s in samples_set]
         return samples
 
 
