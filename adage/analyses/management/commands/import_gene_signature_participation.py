@@ -30,7 +30,7 @@ import statistics
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from genes.models import Gene
-from analyze.models import MLModel, Signature, Participation, ParticipationType
+from analyses.models import MLModel, Signature, Participation, ParticipationType
 
 
 class Command(BaseCommand):

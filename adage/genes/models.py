@@ -16,7 +16,7 @@ class Gene(models.Model):
     Genes will be added from an online database like 'Entrez', using the Django
     management commands (see management/commands/genes_load_geneinfo.py).
     """
-    entrezid = models.IntegerField(null=True, db_index=True, unique=True)
+    entrez_id = models.IntegerField(null=True, db_index=True, unique=True)
 
     # Used for organisms like yeast.
     systematic_name = models.CharField(max_length=32, db_index=True)

@@ -150,7 +150,7 @@ class Command(BaseCommand):
         # Get all genes for this organism from the database.
         entrez_in_db = set(
             Gene.objects.filter(organism=org).values_list(
-                'entrezid', flat=True
+                'entrez_id', flat=True
             )
         )
 
@@ -158,10 +158,10 @@ class Command(BaseCommand):
         # organism.
         xr_in_db = set()
         for x in CrossRef.objects.filter(
-            gene__entrezid__in=entrez_in_db
+            gene__entrez_id__in=entrez_in_db
         ).prefetch_related('crossrefdb', 'gene'):
             xr_in_db.add(
-                (x.crossrefdb.name, x.xrid, x.gene.entrezid)
+                (x.crossrefdb.name, x.xrid, x.gene.entrez_id)
             )
 
         if tax_id and gene_info_fh:
@@ -192,7 +192,7 @@ class Command(BaseCommand):
 
                 org_matches += 1  # Count lines that came from this organism.
                 # Grab requested fields from tab delimited file.
-                (entrezid, standard_name, systematic_name, aliases, crossrefs,
+                (entrez_id, standard_name, systematic_name, aliases, crossrefs,
                  description, status, chromosome
                 ) = (
                     int(tokens[1]), tokens[symb_col], tokens[syst_col],
@@ -246,11 +246,11 @@ class Command(BaseCommand):
                     weight = weight * 2
 
                 gene_object = None
-                entrez_seen.add(entrezid)
-                if entrezid in entrez_in_db:  # This existed already.
-                    logging.debug("Entrez %s existed already.", entrezid)
+                entrez_seen.add(entrez_id)
+                if entrez_id in entrez_in_db:  # This existed already.
+                    logging.debug("Entrez %s existed already.", entrez_id)
                     entrez_found += 1
-                    gene_object = Gene.objects.get(entrezid=entrezid,
+                    gene_object = Gene.objects.get(entrez_id=entrez_id,
                                                    organism=org)
                     changed = False
                     # The following lines update characteristics that may have
@@ -281,11 +281,11 @@ class Command(BaseCommand):
                         # changed.
                         gene_object.save()
 
-                else:  # New entrezid observed.
+                else:  # New entrez_id observed.
                     logging.debug(
-                        "Entrez %s did not exist and will be created.", entrezid
+                        "Entrez %s did not exist and will be created.", entrez_id
                     )
-                    gene_object = Gene(entrezid=entrezid, organism=org,
+                    gene_object = Gene(entrez_id=entrez_id, organism=org,
                                        systematic_name=systematic_name,
                                        standard_name=standard_name,
                                        description=description, obsolete=False,
@@ -312,7 +312,7 @@ class Command(BaseCommand):
                     logging.debug('Found crossreference pair %s.', xref_tuple)
                     # If the record doesn't exist in database, create it.
                     if not (xref_tuple[0], xref_tuple[1],
-                            entrezid) in xr_in_db:
+                            entrez_id) in xr_in_db:
                         xr_obj = CrossRef(
                             crossrefdb=xrdb, xrid=xref_tuple[1], gene=gene_object
                         )
@@ -322,7 +322,7 @@ class Command(BaseCommand):
             # database but not in input file.
             for id in entrez_in_db:
                 if id not in entrez_seen:
-                    gene_object = Gene.objects.get(entrezid=id, organism=org)
+                    gene_object = Gene.objects.get(entrez_id=id, organism=org)
                     if not gene_object.obsolete:
                         gene_object.obsolete = True
                         gene_object.save()

@@ -78,13 +78,13 @@ class GeneViewSet(ModelViewSet):
         # - "standard_name" (multiplied by 2.0 to give it a higher priority)
         # - "systematic_name"
         # - "description"
-        # - entrezid" (converted to string)
+        # - entrez_id" (converted to string)
         similarity_str = self.request.query_params.get('autocomplete', None)
         if similarity_str is not None:
             queryset = queryset.annotate(
                 eid_str=Case(
-                    When(entrezid__isnull=False,
-                         then=Cast('entrezid', output_field=CharField())
+                    When(entrez_id__isnull=False,
+                         then=Cast('entrez_id', output_field=CharField())
                     ),
                     default=Value(''),
                     output_field=CharField(),
@@ -92,13 +92,9 @@ class GeneViewSet(ModelViewSet):
             ).annotate(
                 std_similarity=TrigramSimilarity('standard_name', similarity_str),
                 sys_similarity=TrigramSimilarity('systematic_name', similarity_str),
+                aliases_similarity=TrigramSimilarity('aliases', similarity_str),
                 desc_similarity=TrigramSimilarity('description', similarity_str),
                 eid_similarity=TrigramSimilarity('eid_str', similarity_str),
-                aliases_similarity=Case(
-                    When(aliases__icontains=similarity_str, then=Value(1.0)),
-                    default=Value(0),
-                    output_field=FloatField(),
-                )
             ).annotate(
                 similarity=(
                     F('std_similarity') + F('sys_similarity') + F('aliases_similarity') +
@@ -123,7 +119,7 @@ class GeneViewSet(ModelViewSet):
                          then=Value("description")
                     ),
                     When(eid_similarity__gte=F('max_similarity'),
-                         then=Value("entrezid")
+                         then=Value("entrez_id")
                     ),
                     output_field=CharField(),
                 )

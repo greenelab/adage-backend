@@ -35,19 +35,20 @@ ALLOWED_HOSTS = config.get('allowed_hosts', [])
 # Application definition
 
 INSTALLED_APPS = [
+    'organisms.apps.OrganismsConfig',
+    'genes.apps.GenesConfig',
+    'analyses.apps.AnalysesConfig',
+    'tribe_client.apps.TribeClientConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'rest_framework',
     'django_filters',
     'corsheaders',
-    'organisms',
-    'genes',
-    'analyze',
-    'tribe_client',
 ]
 
 REST_FRAMEWORK = {

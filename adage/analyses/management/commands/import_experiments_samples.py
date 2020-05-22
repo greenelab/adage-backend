@@ -11,7 +11,7 @@ from operator import itemgetter
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from analyze.models import Experiment, Sample, SampleAnnotation, AnnotationType
+from analyses.models import Experiment, Sample, SampleAnnotation, AnnotationType
 
 # Import ADAGE utilities.
 # FIXME: `get_pseudo_sdrf.py` and `gen_spreadsheets.py` modules are copied from
@@ -83,13 +83,17 @@ def import_data(annotation_fh, dir_name=None):
     # Experiment in the database for each matching experiment found in the
     # annotation spreadsheet. Raise an error if any annotated experiment
     # cannot be found in the data retrieved from ArrayExpress.
-    ae_retriever = gp.AERetriever(ae_url=gp._AEURL_EXPERIMENTS,
-        cache_file_name=os.path.join(dir_name, JSON_CACHE_FILE_NAME))
+    ae_retriever = gp.AERetriever(
+        ae_url=gp._AEURL_EXPERIMENTS,
+        cache_file_name=os.path.join(dir_name, JSON_CACHE_FILE_NAME)
+    )
     ae_experiments = ae_retriever.ae_json_to_experiment_text()
     annotated_experiments = ss.get_experiment_ids()
     # we can fail fast by checking for missing experiments before we start
-    missing_experiments = frozenset(annotated_experiments) - \
+    missing_experiments = (
+        frozenset(annotated_experiments) -
         frozenset([e['accession'] for e in ae_experiments])
+    )
     if missing_experiments:
         msg= "The following annotated experiments are missing from ArrayExpress: "
         raise RuntimeError(msg + "[{:s}]".format(', '.join(missing_experiments)))
@@ -105,7 +109,7 @@ def import_data(annotation_fh, dir_name=None):
     # each as we go.
     mismatches = {}  # mismatches indexed by sample and experiment ids
     for r in ss.rows():
-        row_experiment = Experiment.objects.get(pk=r.accession)
+        row_experiment = Experiment.objects.get(accession=r.accession)
         ml_data_source = r.cel_file
         if ml_data_source == '':
             ml_data_source = None

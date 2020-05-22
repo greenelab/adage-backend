@@ -16,32 +16,25 @@ class ExperimentSerializer(serializers.ModelSerializer):
     extra `samples` field with sample IDs and sample names.
     """
 
-    class Meta:
-        model = Experiment
-        fields = ('accession', 'name', 'description', 'samples', 'max_similarity_field')
-
     samples = serializers.SerializerMethodField()
 
     # This field is only populated when `autocomplete` parameter is in the URL
     max_similarity_field = serializers.CharField(required=False)
+
+    class Meta:
+        model = Experiment
+        fields = (
+            'id', 'accession', 'name', 'description',
+            'samples', 'max_similarity_field'
+        )
 
     def get_samples(self, record):
         """
         Collect sample IDs and names dynamically and save them in a dictionary.
         """
 
-        samples_qs = Experiment.objects.filter(pk=record).values(
-            'sample__id', 'sample__name'
-        ).order_by('sample__id')
-
-        samples = list()
-        for s in samples_qs:
-            current_sample = {
-                'id': s['sample__id'],
-                'name':  s['sample__name']
-            }
-            samples.append(current_sample)
-
+        samples_set = record.sample_set.all().order_by('id')
+        samples = [s.id for s in samples_set]
         return samples
 
 

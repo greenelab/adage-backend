@@ -12,7 +12,7 @@ For details of input YAML file's format, see the two examples in this repo:
 import yaml
 from django.core.management.base import BaseCommand, CommandError
 from organisms.models import Organism
-from analyze.models import MLModel
+from analyses.models import MLModel
 
 
 class Command(BaseCommand):

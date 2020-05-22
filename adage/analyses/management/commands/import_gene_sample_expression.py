@@ -30,7 +30,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from organisms.models import Organism
 from genes.models import Gene
-from analyze.models import Sample, ExpressionValue
+from analyses.models import Sample, ExpressionValue
 
 
 class Command(BaseCommand):

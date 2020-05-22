@@ -30,7 +30,7 @@ import logging
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from genes.models import Gene
-from analyze.models import MLModel, Edge
+from analyses.models import MLModel, Edge
 
 NUM_COLUMNS = 4
 BULK_SIZE = 2000

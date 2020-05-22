@@ -20,7 +20,7 @@ def validate_pyname(value):
 
 
 class Experiment(models.Model):
-    accession = models.CharField(max_length=48, primary_key=True)
+    accession = models.CharField(max_length=48, unique=True)
     name = models.CharField(max_length=1000)
     description = models.TextField()
     samples_info = models.TextField(default="")
@@ -33,10 +33,7 @@ class Experiment(models.Model):
 
 
 class Sample(models.Model):
-    name = models.CharField(
-        "sample name",
-        max_length=80,
-        blank=False)
+    name = models.CharField("sample name", max_length=80, blank=False)
     ml_data_source = models.CharField(
         "Machine Learning data used for modeling, e.g. CEL file",
         max_length=120,
@@ -201,10 +198,12 @@ class Edge(models.Model):
     weight = models.FloatField()
 
     def __str__(self):
-        return "%s: %s vs. %s, weight is %f" % (self.mlmodel.title,
-                                                self.gene1.entrezid,
-                                                self.gene2.entrezid,
-                                                self.weight)
+        return "%s: %s vs. %s, weight is %f" % (
+            self.mlmodel.title,
+            self.gene1.entrez_id,
+            self.gene2.entrez_id,
+            self.weight
+        )
 
     class Meta:
         unique_together = ('mlmodel', 'gene1', 'gene2')
@@ -243,8 +242,8 @@ class Participation(models.Model):
 
     def __str__(self):
         return "Model: %s, Signature: %s, Gene: %s" % (
-            self.signature.mlmodel.title, self.signature.name,
-            self.gene.entrezid)
+            self.signature.mlmodel.title, self.signature.name, self.gene.entrez_id
+        )
 
 
 class ExpressionValue(models.Model):
@@ -262,4 +261,5 @@ class ExpressionValue(models.Model):
 
     def __str__(self):
         return "Expression value %f for Sample %s and Gene %s" % (
-            self.value, self.sample.name, self.gene.entrezid)
+            self.value, self.sample.name, self.gene.entrez_id
+        )
