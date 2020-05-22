@@ -33,15 +33,12 @@ class ExperimentSerializer(serializers.ModelSerializer):
         Collect sample IDs and names dynamically and save them in a dictionary.
         """
 
-        samples_qs = Experiment.objects.filter(pk=record).values(
-            'sample__id', 'sample__name'
-        ).order_by('sample__id')
-
+        samples_set = record.sample_set.all().order_by('id')
         samples = list()
-        for s in samples_qs:
+        for s in samples_set:
             current_sample = {
-                'id': s['sample__id'],
-                'name':  s['sample__name']
+                'id': s.id,
+                'name':  s.name
             }
             samples.append(current_sample)
 

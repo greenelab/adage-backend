@@ -33,10 +33,7 @@ class Experiment(models.Model):
 
 
 class Sample(models.Model):
-    name = models.CharField(
-        "sample name",
-        max_length=80,
-        blank=False)
+    name = models.CharField("sample name", max_length=80, blank=False)
     ml_data_source = models.CharField(
         "Machine Learning data used for modeling, e.g. CEL file",
         max_length=120,
