@@ -1,4 +1,4 @@
-# py3-adage-backend
+# adage-backend
 
 This repository hosts Python 3.X backend of the web server
 [adage.greenelab.com](https://adage.greenelab.com). Some of the code was ported
