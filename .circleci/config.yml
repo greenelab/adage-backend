@@ -4,14 +4,15 @@ jobs:
   tests:
     docker:
       # Primary docker container where the tests will be run
-      - image: circleci/python:3.6.8
+      - image: circleci/python:3.8.5
 
       # Secondary docker container for database service
-      - image: postgres:11.4
+      - image: postgres:12.4
         environment:
           POSTGRES_USER: circleci
+          POSTGRES_PASSWORD: password
 
-    working_directory: ~/py3-adage-backend
+    working_directory: ~/adage-backend
 
     steps:
       - checkout
@@ -30,7 +31,7 @@ jobs:
             python3 -m venv ~/.venv/adage
       - run:
           name: Backend tests
-          working_directory: ~/py3-adage-backend/adage
+          working_directory: ~/adage-backend/adage
           command: |
             source ~/.venv/adage/bin/activate
             pip install pip --upgrade
