@@ -41,7 +41,7 @@ pip install -r $HOME/adage-backend/adage/requirements.txt
 #    Create pickled file for "unpickled genesets" query
 ##############################################################
 # Query endpoint:
-# https:<host>/api/v1/tribe_client/return_unpickled_genesets?organism=Pseudomonas+aeruginosa&model=1
+# /api/v1/tribe_client/return_unpickled_genesets?organism=Pseudomonas+aeruginosa
 cd $HOME/adage-backend/deployment
 python3 ./create_pickled_genesets.py
 

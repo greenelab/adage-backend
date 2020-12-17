@@ -27,9 +27,9 @@ is downloaded from:
 
 4. **Pseudomonas_aeruginosa_genesets.json**: public genesets of pseudomonas
 
-   This file should be converted to a Python pickle format by `deployment/create_pickled_genesets.py`,
-   which will be required by this endpoint:
-   `tribe_client/return_unpickled_genesets?organism=Pseudomonas+aeruginosa`
+   This JSON file should be converted to Python pickle format by `deployment/create_pickled_genesets.py`.
+   The pickle file is required by the endpoint of
+   `/api/v1/tribe_client/return_unpickled_genesets?organism=Pseudomonas+aeruginosa`
 
 5. **raw/Pseudomonas_aeruginosa_PAO1_107.csv**: Pseudomonas gene annotations file
 
@@ -48,8 +48,6 @@ http://pseudomonas.com/downloads/pseudomonas/pgd_r_19_1/Pseudomonas_aeruginosa_U
    </div>
 
    This file is used to map a gene's PAO1 name to its standard name and aliases (if any).
-
-
 
 6. **raw/Pseudomonas_aeruginosa_PAO1_107_orthologs.csv**: Pseudomonas ortholog predictions file
 
