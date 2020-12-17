@@ -89,8 +89,8 @@ sudo chown nobody:nogroup /var/log/supervisor/adage-gunicorn.log
 sudo systemctl restart supervisor
 sudo systemctl restart nginx
 
-# Reminder: "$HOME/adage-backend/adage/adage/config.yml" must exist
-if [ ! -e $HOME/adage-backend/adage/adage/xxconfig.yml ]; then
+# Reminder: "$HOME/adage-backend/adage/adage/config.yml" must exist!
+if [ ! -e $HOME/adage-backend/adage/adage/config.yml ]; then
     echo "Reminder: config.yml not found in $HOME/adage-backend/adage/adage/"
     echo "Please create it and restart the app by 'sudo systemctl restart supervisor' command"
     exit 1
